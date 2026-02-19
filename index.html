@@ -3,597 +3,282 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Soil Community • Africa-First Network</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap" rel="stylesheet">
+    <title>TerraScout | Global & Local Soil Explorer</title>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
+        /* Modern CSS Reset and Variables */
         :root {
-            --emerald: 16 185 129;
+            --primary: #2ecc71;
+            --secondary: #27ae60;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+            --text: #333;
+            --panel-bg: rgba(255, 255, 255, 0.95);
         }
-        .tail-container {
-            font-family: 'Inter', system_ui, sans-serif;
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
         }
-        .logo-font {
-            font-family: 'Space Grotesk', sans-serif;
+
+        body {
+            color: var(--text);
+            overflow: hidden; /* Keep it app-like */
         }
-        .hero-bg {
-            background: linear-gradient(135deg, #166534 0%, #052e16 100%);
+
+        /* Navbar */
+        nav {
+            background: var(--dark);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 1000;
         }
-        .group-card {
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+        nav h1 {
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: var(--primary);
         }
-        .group-card:hover {
-            transform: scale(1.04) translateY(-6px);
+
+        /* Main App Container */
+        .app-container {
+            display: flex;
+            height: calc(100vh - 60px);
+            position: relative;
         }
-        .insight-card {
-            transition: all 0.3s ease;
+
+        /* The Interactive Map */
+        #map {
+            flex-grow: 1;
+            height: 100%;
+            z-index: 1;
         }
-        .scientist-card {
-            transition: all 0.3s ease;
-        }
-        .scientist-card:hover {
-            box-shadow: 0 25px 50px -12px rgb(16 185 129 / 0.25);
-        }
-        .live-dot {
+
+        /* UI Overlays & Instructions */
+        .map-overlay {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--dark);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: 600;
+            z-index: 500;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             animation: pulse 2s infinite;
+            cursor: pointer;
         }
+
+        /* Instant Report Sidebar (Animated) */
+        .report-panel {
+            position: absolute;
+            top: 0;
+            right: -400px; /* Hidden by default */
+            width: 380px;
+            height: 100%;
+            background: var(--panel-bg);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            box-shadow: -5px 0 25px rgba(0,0,0,0.1);
+            transition: right 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .report-panel.active {
+            right: 0;
+        }
+
+        .close-btn {
+            float: right;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #999;
+            border: none;
+            background: none;
+            transition: color 0.3s ease;
+        }
+
+        .close-btn:hover { color: var(--dark); }
+
+        .report-header {
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 0.5rem;
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .data-card {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            text-align: center;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.4s ease;
+        }
+
+        /* Animation classes triggered via JS */
+        .data-card.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .data-card h3 {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .data-card .value {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        /* CSS Animations */
         @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
+            0% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(46, 204, 113, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0); }
         }
-        .map-pin {
-            animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
-        }
+
     </style>
 </head>
-<body class="tail-container bg-emerald-50 text-slate-900">
+<body>
 
-    <!-- NAVBAR -->
-    <nav class="bg-white border-b border-emerald-100 sticky top-0 z-50">
-        <div class="max-w-screen-2xl mx-auto px-8 py-5 flex items-center justify-between">
-            <div class="flex items-center gap-x-3">
-                <div class="w-9 h-9 bg-emerald-600 rounded-2xl flex items-center justify-center text-white text-2xl shadow-inner">🌱</div>
-                <div>
-                    <span class="logo-font text-3xl font-semibold tracking-tighter text-emerald-700">TerraSoil</span>
-                    <span class="text-emerald-500 text-sm font-medium ml-1">AI</span>
-                </div>
-            </div>
-
-            <div class="flex items-center gap-x-9 text-sm font-medium">
-                <a href="#" onclick="window.location.href='index.html'" class="flex items-center gap-x-2 text-slate-500 hover:text-emerald-700">
-                    <i class="fa-solid fa-gauge-high"></i> Dashboard
-                </a>
-                <a href="#" onclick="window.location.href='analyze.html'" class="flex items-center gap-x-2 text-slate-500 hover:text-emerald-700">
-                    <i class="fa-solid fa-upload"></i> Analyze
-                </a>
-                <a href="#" class="text-emerald-700 font-semibold flex items-center gap-x-2 border-b-2 border-emerald-600 pb-1">
-                    <i class="fa-solid fa-users"></i> Community
-                </a>
-                <a href="#" class="flex items-center gap-x-2 text-slate-500 hover:text-emerald-700">
-                    <i class="fa-solid fa-chart-line"></i> Insights Map
-                </a>
-            </div>
-
-            <div class="flex items-center gap-x-6">
-                <button onclick="showShareModal()" 
-                        class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-3xl text-sm font-semibold flex items-center gap-x-2 transition-all">
-                    <i class="fa-solid fa-share-nodes"></i>
-                    <span>Share Anonymised Data</span>
-                </button>
-                
-                <div class="flex items-center gap-x-3">
-                    <div class="text-right">
-                        <div class="font-semibold text-sm">Kgaogelo</div>
-                        <div class="text-emerald-600 text-xs">Johannesburg • Gauteng</div>
-                    </div>
-                    <div class="w-9 h-9 bg-emerald-100 rounded-2xl overflow-hidden border-2 border-emerald-300">
-                        <img src="https://picsum.photos/id/64/128/128" alt="Profile" class="w-full h-full object-cover">
-                    </div>
-                </div>
-            </div>
+    <nav>
+        <h1>🌱 TerraScout</h1>
+        <div>
+            <span style="margin-right: 15px;">Global & Local Soil Explorer</span>
+            <button style="padding: 5px 15px; border-radius: 20px; border: none; background: var(--primary); color: white; cursor: pointer; font-weight: bold;">API Docs</button>
         </div>
     </nav>
 
-    <div class="max-w-screen-2xl mx-auto flex">
-        <!-- SIDEBAR -->
-        <div class="w-80 bg-white border-r border-emerald-100 min-h-screen p-6 flex flex-col">
-            <div class="mb-10">
-                <div class="uppercase text-xs font-semibold tracking-widest text-emerald-700 mb-4 flex items-center gap-x-2">
-                    <span class="w-2 h-2 bg-emerald-500 rounded-full live-dot"></span>
-                    AFRICA-FIRST NETWORK
-                </div>
-                <div class="text-2xl font-semibold leading-none">12,847<br><span class="text-emerald-600 text-xl">farmers connected</span></div>
-                <div class="text-xs text-slate-400 mt-1">Across 9 provinces • 4 countries</div>
+    <div class="app-container">
+        <div id="map"></div>
+        <div class="map-overlay">Click anywhere on the map to generate an instant soil report</div>
+
+        <div class="report-panel" id="reportPanel">
+            <button class="close-btn" onclick="closeReport()">&times;</button>
+            <div class="report-header">
+                <h2>Instant Soil Report</h2>
+                <p id="coord-display" style="font-size: 0.8rem; color: #666; margin-top: 5px;">Coords: --</p>
             </div>
 
-            <!-- My Groups -->
-            <div class="mb-8">
-                <div class="flex justify-between items-center mb-4 px-1">
-                    <span class="text-sm font-semibold text-slate-500">My Regional Groups</span>
-                    <button onclick="showAllGroups()" class="text-emerald-600 text-xs font-medium">All →</button>
+            <div class="data-grid" id="dataGrid">
                 </div>
-                <div id="my-groups" class="space-y-3"></div>
-            </div>
-
-            <!-- Quick Stats -->
-            <div class="bg-emerald-50 rounded-3xl p-6 mt-auto">
-                <div class="text-xs uppercase tracking-widest text-slate-400 mb-3">This month’s collective impact</div>
-                <div class="grid grid-cols-2 gap-6 text-center">
-                    <div>
-                        <div class="text-4xl font-semibold text-emerald-700">214 t</div>
-                        <div class="text-xs text-slate-500">Lime recommended</div>
-                    </div>
-                    <div>
-                        <div class="text-4xl font-semibold text-emerald-700">+9.4%</div>
-                        <div class="text-xs text-slate-500">Avg yield gain</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- MAIN CONTENT -->
-        <div class="flex-1 p-10">
-            <!-- HERO -->
-            <div class="hero-bg text-white rounded-3xl px-12 py-16 mb-12 relative overflow-hidden">
-                <div class="max-w-xl">
-                    <div class="inline-flex items-center gap-x-2 bg-white/20 backdrop-blur-md px-5 py-2 rounded-3xl text-sm mb-6">
-                        <span class="text-amber-300">🌍</span>
-                        <span class="font-medium">Africa-First • Farmer-Led</span>
-                    </div>
-                    <h1 class="text-6xl leading-none font-semibold tracking-tighter logo-font mb-4">
-                        Together we heal<br>our soils
-                    </h1>
-                    <p class="text-emerald-100 text-xl">Share anonymised data. Get local advice. Build resilient African agriculture.</p>
-                    
-                    <div class="mt-10 flex gap-x-4">
-                        <button onclick="joinFeaturedGroup()" 
-                                class="bg-white text-emerald-800 font-semibold px-10 py-4 rounded-3xl flex items-center gap-x-3 hover:shadow-xl transition-all">
-                            <i class="fa-solid fa-handshake"></i>
-                            Join Gauteng Farmers
-                        </button>
-                        <button onclick="showShareModal()" 
-                                class="border border-white/70 hover:bg-white/10 font-medium px-8 py-4 rounded-3xl transition-all">
-                            Share my data anonymously
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Decorative map pins -->
-                <div class="absolute bottom-8 right-12 text-6xl opacity-30">🇿🇦</div>
-                <div class="absolute top-12 right-32 w-5 h-5 bg-white rounded-full flex items-center justify-center map-pin">
-                    <div class="w-2 h-2 bg-emerald-400 rounded-full"></div>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-12 gap-8">
-                <!-- REGIONAL GROUPS -->
-                <div class="col-span-12 lg:col-span-5">
-                    <div class="flex items-center justify-between mb-6">
-                        <span class="text-xl font-semibold">Regional Groups</span>
-                        <span onclick="showAllGroups()" class="text-emerald-600 text-sm cursor-pointer flex items-center gap-x-1">
-                            Explore all <i class="fa-solid fa-arrow-right"></i>
-                        </span>
-                    </div>
-                    
-                    <div class="grid grid-cols-2 gap-6" id="regional-groups"></div>
-                </div>
-
-                <!-- COLLECTIVE INSIGHTS -->
-                <div class="col-span-12 lg:col-span-7">
-                    <div class="flex justify-between items-end mb-6">
-                        <div>
-                            <span class="text-xl font-semibold">Collective Insights</span>
-                            <span class="ml-3 text-xs bg-emerald-100 text-emerald-700 px-4 py-1 rounded-3xl">Live • Anonymised</span>
-                        </div>
-                        <button onclick="refreshInsights()" 
-                                class="text-slate-400 hover:text-emerald-600 text-sm flex items-center gap-x-2">
-                            <i class="fa-solid fa-rotate"></i> Refresh
-                        </button>
-                    </div>
-                    
-                    <div id="insights-feed" class="space-y-5 max-h-[620px] overflow-y-auto pr-4 custom-scroll"></div>
-                </div>
-
-                <!-- SCIENTIST DIRECTORY -->
-                <div class="col-span-12 bg-white rounded-3xl shadow-sm p-8">
-                    <div class="flex items-center justify-between mb-8">
-                        <div class="font-semibold text-2xl">Verified Soil Scientists</div>
-                        <div class="relative w-72">
-                            <input id="scientist-search" 
-                                   onkeyup="filterScientists()"
-                                   type="text" 
-                                   placeholder="Search by name or province..." 
-                                   class="w-full bg-slate-100 border border-transparent focus:border-emerald-300 rounded-3xl py-4 pl-14 text-sm">
-                            <i class="fa-solid fa-magnifying-glass absolute left-6 top-4 text-slate-400"></i>
-                        </div>
-                    </div>
-                    
-                    <div id="scientists-grid" class="grid grid-cols-2 lg:grid-cols-4 gap-6"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- SHARE DATA MODAL -->
-    <div id="share-modal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-[999]">
-        <div class="bg-white rounded-3xl max-w-xl w-full mx-4 overflow-hidden">
-            <div class="px-8 py-6 border-b flex items-center justify-between">
-                <span class="font-semibold text-2xl">Share Anonymised Data</span>
-                <button onclick="closeShareModal()" class="text-4xl leading-none text-slate-300 hover:text-slate-400">×</button>
-            </div>
             
-            <div class="p-8">
-                <textarea id="share-text" rows="4" 
-                          class="w-full border border-slate-200 rounded-3xl p-6 text-sm focus:outline-none focus:border-emerald-300"
-                          placeholder="Example: My Johannesburg ward soil lost 12% organic matter since 2020..."></textarea>
-                
-                <div class="mt-6 grid grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-xs font-medium text-slate-500 mb-2">Province</label>
-                        <select id="share-province" class="w-full border border-slate-200 rounded-3xl py-4 px-6 text-sm">
-                            <option>Gauteng</option>
-                            <option>Limpopo</option>
-                            <option>KwaZulu-Natal</option>
-                            <option>Western Cape</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-slate-500 mb-2">Data Type</label>
-                        <select id="share-type" class="w-full border border-slate-200 rounded-3xl py-4 px-6 text-sm">
-                            <option>Organic Matter</option>
-                            <option>pH Trend</option>
-                            <option>NPK Levels</option>
-                            <option>Water Retention</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="p-8 border-t flex justify-between items-center bg-slate-50">
-                <div class="text-xs text-slate-400 flex items-center gap-x-2">
-                    <i class="fa-solid fa-shield-halved"></i>
-                    100% anonymised &amp; verified
-                </div>
-                <button onclick="submitAnonymisedData()" 
-                        class="bg-emerald-600 hover:bg-emerald-700 text-white px-10 py-4 rounded-3xl font-semibold flex items-center gap-x-3">
-                    Publish to Network
-                    <i class="fa-solid fa-paper-plane"></i>
-                </button>
-            </div>
+            <button style="width: 100%; margin-top: 20px; padding: 10px; background: var(--dark); color: white; border: none; border-radius: 5px; cursor: pointer;">Download Full PDF</button>
         </div>
     </div>
 
-    <!-- SCIENTIST PROFILE MODAL -->
-    <div id="scientist-modal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-[999]">
-        <div class="bg-white rounded-3xl max-w-md w-full mx-4">
-            <div class="p-8">
-                <div class="flex justify-end">
-                    <button onclick="closeScientistModal()" class="text-3xl text-slate-300">×</button>
-                </div>
-                <div id="modal-scientist-content" class="text-center"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- TOAST -->
-    <div id="toast" class="hidden fixed bottom-8 right-8 bg-emerald-800 text-white rounded-3xl px-7 py-4 flex items-center gap-x-3 shadow-2xl">
-        <i class="fa-solid fa-check-circle text-2xl"></i>
-        <span id="toast-text" class="font-medium pr-6"></span>
-    </div>
-
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // Sample data
-        const regionalGroups = [
-            { id: 1, name: "Gauteng Farmers", location: "Johannesburg & surrounds", members: 2840, activity: "3 new insights today", emoji: "🌾", joined: true },
-            { id: 2, name: "Limpopo Smallholders", location: "Polokwane • Vhembe", members: 1650, activity: "Organic matter map updated", emoji: "🥜", joined: false },
-            { id: 3, name: "KZN Maize Growers", location: "Pietermaritzburg", members: 920, activity: "Lime trial results", emoji: "🌽", joined: false },
-            { id: 4, name: "Western Cape Vineyards", location: "Stellenbosch", members: 470, activity: "pH trends shared", emoji: "🍇", joined: false }
-        ];
+        // 1. Initialize the Map (Centered roughly on South Africa as requested)
+        const map = L.map('map').setView([-28.4793, 24.6727], 6);
 
-        const insightsData = [
-            {
-                id: 1,
-                title: "Johannesburg Ward 112",
-                text: "Soils lost 15% organic matter since 2015. Average now 1.8%.",
-                province: "Gauteng",
-                time: "11m ago",
-                trend: "-15%",
-                emoji: "📉"
-            },
-            {
-                id: 2,
-                title: "Limpopo • Mopani District",
-                text: "Collective data shows 28% of smallholder fields now below 5.8 pH.",
-                province: "Limpopo",
-                time: "47m ago",
-                trend: "pH alert",
-                emoji: "⚠️"
-            },
-            {
-                id: 3,
-                title: "Free State • Bloemfontein",
-                text: "Nitrogen use efficiency improved 19% after QUEFTS-guided applications.",
-                province: "Free State",
-                time: "2h ago",
-                trend: "+19%",
-                emoji: "📈"
-            }
-        ];
+        // 2. Base Layers (Simulating standard and satellite views)
+        const streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        });
 
-        const scientists = [
-            {
-                id: 1,
-                name: "Dr. Thabo Mokoena",
-                title: "Soil Fertility Specialist",
-                location: "Pretoria, Gauteng",
-                expertise: "NPK • Lime • Conservation",
-                verified: true,
-                avatar: "https://picsum.photos/id/64/300/300",
-                bio: "15 years working with Gauteng duplex soils. Helped 400+ farms."
-            },
-            {
-                id: 2,
-                name: "Prof. Naledi Khumalo",
-                title: "Pedology & Water Retention",
-                location: "Polokwane, Limpopo",
-                expertise: "Smallholder systems • Clay soils",
-                verified: true,
-                avatar: "https://picsum.photos/id/201/300/300",
-                bio: "Author of Limpopo Soil Health Guide 2024"
-            },
-            {
-                id: 3,
-                name: "Dr. Sipho Ndlovu",
-                title: "Soil Microbiologist",
-                location: "Durban, KZN",
-                expertise: "Organic matter • Cover crops",
-                verified: true,
-                avatar: "https://picsum.photos/id/1005/300/300",
-                bio: "Runs mobile soil labs for rural cooperatives"
-            },
-            {
-                id: 4,
-                name: "Dr. Aisha Patel",
-                title: "Precision Agriculture",
-                location: "Cape Town",
-                expertise: "IoT sensors • QUEFTS modelling",
-                verified: true,
-                avatar: "https://picsum.photos/id/1011/300/300",
-                bio: "Western Cape representative – Soil Science Society of SA"
-            }
-        ];
+        const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles © Esri'
+        });
 
-        function renderMyGroups() {
-            const container = document.getElementById("my-groups");
-            container.innerHTML = "";
-            regionalGroups.filter(g => g.joined).forEach(group => {
-                const div = document.createElement("div");
-                div.className = "flex items-center gap-x-4 bg-emerald-50 rounded-3xl p-4 cursor-pointer";
-                div.innerHTML = `
-                    <div class="text-4xl">${group.emoji}</div>
-                    <div class="flex-1">
-                        <div class="font-semibold text-sm">${group.name}</div>
-                        <div class="text-xs text-emerald-600">${group.members} members</div>
-                    </div>
-                `;
-                div.onclick = () => showToast(`Opened ${group.name} chat`);
-                container.appendChild(div);
-            });
-        }
+        streetLayer.addTo(map);
 
-        function renderRegionalGroups() {
-            const container = document.getElementById("regional-groups");
-            container.innerHTML = "";
-            regionalGroups.forEach(group => {
-                const div = document.createElement("div");
-                div.className = `group-card bg-white border border-emerald-100 rounded-3xl p-6 cursor-pointer ${group.joined ? 'ring-2 ring-emerald-600' : ''}`;
-                div.innerHTML = `
-                    <div class="flex justify-between">
-                        <div class="text-5xl">${group.emoji}</div>
-                        ${group.joined ? `<span class="text-xs bg-emerald-100 text-emerald-700 px-3 h-6 rounded-2xl flex items-center">MEMBER</span>` : ''}
-                    </div>
-                    <div class="mt-6 font-semibold text-lg leading-tight">${group.name}</div>
-                    <div class="text-xs text-slate-400 mt-1">${group.location}</div>
-                    
-                    <div class="mt-8 flex items-center justify-between text-xs">
-                        <div class="flex items-center gap-x-1">
-                            <i class="fa-solid fa-users text-emerald-500"></i>
-                            <span class="font-medium">${group.members}</span>
-                        </div>
-                        <div onclick="toggleJoin(${group.id}); event.stopImmediatePropagation();" 
-                             class="px-6 py-2 rounded-3xl font-medium text-xs transition-all ${group.joined ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 hover:bg-emerald-600 hover:text-white'}">
-                            ${group.joined ? 'Leave' : 'Join'}
-                        </div>
-                    </div>
-                `;
-                div.onclick = () => showToast(`Welcome to ${group.name}`);
-                container.appendChild(div);
-            });
-        }
+        // Simulated Weather/Rainfall Overlay (just a tinted placeholder layer for demo)
+        const rainfallOverlay = L.tileLayer('https://{s}.tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=YOUR_API_KEY', {
+            opacity: 0.5
+        });
 
-        function toggleJoin(id) {
-            const group = regionalGroups.find(g => g.id === id);
-            if (group) {
-                group.joined = !group.joined;
-                renderRegionalGroups();
-                renderMyGroups();
-                showToast(group.joined ? `Welcome to ${group.name}!` : `Left ${group.name}`);
-            }
-        }
-
-        function renderInsights() {
-            const container = document.getElementById("insights-feed");
-            container.innerHTML = "";
-            insightsData.forEach(insight => {
-                const div = document.createElement("div");
-                div.className = "insight-card bg-white border border-emerald-100 rounded-3xl p-6 flex gap-x-6";
-                div.innerHTML = `
-                    <div class="text-4xl w-12">${insight.emoji}</div>
-                    <div class="flex-1">
-                        <div class="flex items-center justify-between">
-                            <div class="font-semibold">${insight.title}</div>
-                            <div class="text-xs text-slate-400">${insight.time}</div>
-                        </div>
-                        <div class="mt-3 text-slate-600 leading-snug">${insight.text}</div>
-                        <div class="mt-4 flex items-center gap-x-2">
-                            <span class="px-4 py-1 bg-emerald-50 text-emerald-700 text-xs rounded-3xl">${insight.province}</span>
-                            <span class="text-emerald-600 text-sm font-medium">${insight.trend}</span>
-                        </div>
-                    </div>
-                `;
-                container.appendChild(div);
-            });
-        }
-
-        function renderScientists(filtered = scientists) {
-            const container = document.getElementById("scientists-grid");
-            container.innerHTML = "";
-            filtered.forEach(scientist => {
-                const div = document.createElement("div");
-                div.className = "scientist-card bg-white border border-slate-100 rounded-3xl overflow-hidden cursor-pointer";
-                div.innerHTML = `
-                    <img src="${scientist.avatar}" class="w-full h-44 object-cover">
-                    <div class="p-5">
-                        <div class="flex items-center gap-x-2">
-                            <span class="font-semibold">${scientist.name}</span>
-                            ${scientist.verified ? `<i class="fa-solid fa-circle-check text-emerald-500"></i>` : ''}
-                        </div>
-                        <div class="text-xs text-slate-500">${scientist.title}</div>
-                        <div class="text-xs text-emerald-600 mt-4">${scientist.location}</div>
-                        <div class="text-[10px] text-slate-400 mt-1">${scientist.expertise}</div>
-                    </div>
-                `;
-                div.onclick = () => showScientistModal(scientist);
-                container.appendChild(div);
-            });
-        }
-
-        function filterScientists() {
-            const term = document.getElementById("scientist-search").value.toLowerCase();
-            const filtered = scientists.filter(s => 
-                s.name.toLowerCase().includes(term) || 
-                s.location.toLowerCase().includes(term)
-            );
-            renderScientists(filtered);
-        }
-
-        function showScientistModal(scientist) {
-            const modal = document.getElementById("scientist-modal");
-            const content = document.getElementById("modal-scientist-content");
-            
-            content.innerHTML = `
-                <img src="${scientist.avatar}" class="w-28 h-28 mx-auto rounded-3xl object-cover ring-4 ring-emerald-100">
-                <div class="mt-6 font-semibold text-2xl">${scientist.name}</div>
-                <div class="text-emerald-600">${scientist.title}</div>
-                <div class="text-xs mt-1 text-slate-400">${scientist.location}</div>
-                
-                <div class="my-8 bg-emerald-50 rounded-3xl p-6 text-left text-sm">
-                    ${scientist.bio}
-                </div>
-                
-                <button onclick="contactScientist()" 
-                        class="w-full py-4 bg-emerald-700 hover:bg-emerald-800 text-white font-semibold rounded-3xl">
-                    Message on WhatsApp
-                </button>
-            `;
-            modal.classList.remove("hidden");
-            modal.classList.add("flex");
-        }
-
-        function closeScientistModal() {
-            const modal = document.getElementById("scientist-modal");
-            modal.classList.add("hidden");
-            modal.classList.remove("flex");
-        }
-
-        function contactScientist() {
-            closeScientistModal();
-            showToast("WhatsApp link opened (demo)");
-        }
-
-        function showShareModal() {
-            document.getElementById("share-modal").classList.remove("hidden");
-            document.getElementById("share-modal").classList.add("flex");
-        }
-
-        function closeShareModal() {
-            document.getElementById("share-modal").classList.add("hidden");
-            document.getElementById("share-modal").classList.remove("flex");
-        }
-
-        function submitAnonymisedData() {
-            closeShareModal();
-            const newInsight = {
-                id: Date.now(),
-                title: "New collective contribution",
-                text: document.getElementById("share-text").value || "Anonymous farmer shared valuable soil trend data.",
-                province: document.getElementById("share-province").value,
-                time: "just now",
-                trend: "📊",
-                emoji: "🌍"
-            };
-            insightsData.unshift(newInsight);
-            renderInsights();
-            showToast("Thank you! Your anonymised data is now live in the network");
-        }
-
-        function refreshInsights() {
-            showToast("Feed refreshed • 1 new insight from Limpopo");
-            // Simulate new insight
-            insightsData.unshift({
-                id: Date.now(),
-                title: "Limpopo • Sekhukhune",
-                text: "Smallholders report +11% moisture retention after mulching trials",
-                province: "Limpopo",
-                time: "just now",
-                trend: "+11%",
-                emoji: "💧"
-            });
-            renderInsights();
-        }
-
-        function showAllGroups() {
-            showToast("Full group directory coming soon");
-        }
-
-        function joinFeaturedGroup() {
-            const gauteng = regionalGroups[0];
-            gauteng.joined = true;
-            renderRegionalGroups();
-            renderMyGroups();
-            showToast("Welcome to Gauteng Farmers Network! 🎉");
-        }
-
-        function showToast(message) {
-            const toast = document.getElementById("toast");
-            document.getElementById("toast-text").innerHTML = message;
-            toast.classList.remove("hidden");
-            setTimeout(() => {
-                toast.classList.add("translate-y-12", "opacity-0");
-                setTimeout(() => {
-                    toast.classList.add("hidden");
-                    toast.classList.remove("translate-y-12", "opacity-0");
-                }, 400);
-            }, 3000);
-        }
-
-        // Initialize
-        window.onload = function() {
-            renderMyGroups();
-            renderRegionalGroups();
-            renderInsights();
-            renderScientists();
-            
-            // Welcome toast
-            setTimeout(() => {
-                showToast("Welcome back to the Africa-First Network, 🌍");
-            }, 1400);
-            
-            console.log("%cTerraSoil Community ready • Built for African farmers", "color:#10b981; font-family:monospace");
+        // Layer Controls
+        const baseMaps = {
+            "Standard Map": streetLayer,
+            "Satellite Imagery": satelliteLayer
         };
+        const overlayMaps = {
+            "Rainfall Patterns (Mock)": rainfallOverlay
+        };
+        L.control.layers(baseMaps, overlayMaps).addTo(map);
+
+        let currentMarker = null;
+
+        // 3. Map Click Event -> Generate Report
+        map.on('click', function(e) {
+            const lat = e.latlng.lat.toFixed(4);
+            const lng = e.latlng.lng.toFixed(4);
+
+            // Add a marker with a pop animation
+            if(currentMarker) map.removeLayer(currentMarker);
+            currentMarker = L.marker([lat, lng]).addTo(map);
+
+            // Update UI
+            document.getElementById('coord-display').innerText = `Lat: ${lat}, Lng: ${lng}`;
+            openReport();
+            generateMockData();
+        });
+
+        // UI Functions
+        const panel = document.getElementById('reportPanel');
+        function openReport() {
+            panel.classList.add('active');
+        }
+        function closeReport() {
+            panel.classList.remove('active');
+        }
+
+        // Simulate fetching data from your PostGIS/SoilGrids API
+        function generateMockData() {
+            const grid = document.getElementById('dataGrid');
+            grid.innerHTML = ''; // Clear previous
+
+            // Simulated Soil Data
+            const soilData = [
+                { label: 'Soil Texture', value: 'Sandy Loam' },
+                { label: 'pH Level', value: (Math.random() * (8.0 - 5.5) + 5.5).toFixed(1) },
+                { label: 'Organic Matter', value: (Math.random() * 5 + 1).toFixed(1) + '%' },
+                { label: 'Nitrogen (N)', value: Math.floor(Math.random() * 50 + 10) + ' mg/kg' },
+                { label: 'Water Holding', value: 'Medium' },
+                { label: 'Erosion Risk', value: Math.random() > 0.5 ? 'Low' : 'Moderate' }
+            ];
+
+            // Render cards with staggered fade-in animation
+            soilData.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'data-card';
+                card.innerHTML = `
+                    <h3>${item.label}</h3>
+                    <div class="value">${item.value}</div>
+                `;
+                grid.appendChild(card);
+
+                // Staggered animation trigger
+                setTimeout(() => {
+                    card.classList.add('show');
+                }, 100 * index);
+            });
+        }
     </script>
 </body>
 </html>
