@@ -13,6 +13,7 @@
             --dark: #1A1A1A; 
             --light: #F8F9FA;
             --text-gray: #4A4A4A;
+            --footer-bg: #111111;
         }
 
         * {
@@ -97,7 +98,6 @@
             margin-bottom: 1rem;
         }
 
-        /* Functional Visual Containers */
         .visual-container {
             background: white;
             padding: 2rem;
@@ -110,7 +110,6 @@
             align-items: center;
         }
 
-        /* AI Upload Styling */
         #upload-zone {
             border: 2px dashed var(--plant-color);
             width: 100%;
@@ -126,7 +125,6 @@
 
         #upload-zone:hover { background: #f0fff4; }
 
-        /* Control Toggle for Water */
         .switch {
             position: relative;
             display: inline-block;
@@ -147,7 +145,94 @@
 
         input:checked + .slider { background-color: var(--water-color); }
 
-        footer { background: var(--dark); color: white; text-align: center; padding: 3rem; }
+        /* PROFESSIONAL FOOTER STYLES */
+        footer {
+            background-color: var(--footer-bg);
+            color: #e0e0e0;
+            padding: 4rem 5% 2rem 5%;
+            font-size: 0.9rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 2fr;
+            gap: 3rem;
+            border-bottom: 1px solid #333;
+            padding-bottom: 3rem;
+        }
+
+        .footer-brand h2 {
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .footer-brand h2 span { color: var(--plant-color); }
+
+        .footer-column h4 {
+            color: white;
+            margin-bottom: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.8rem;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-column ul li a {
+            color: #aaa;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .footer-column ul li a:hover {
+            color: var(--plant-color);
+        }
+
+        .newsletter-form {
+            display: flex;
+            margin-top: 1rem;
+        }
+
+        .newsletter-form input {
+            background: #222;
+            border: 1px solid #444;
+            padding: 0.8rem;
+            color: white;
+            border-radius: 5px 0 0 5px;
+            flex: 1;
+        }
+
+        .newsletter-form button {
+            background: var(--plant-color);
+            border: none;
+            padding: 0 1.2rem;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .footer-bottom {
+            padding-top: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #666;
+        }
+
+        @media (max-width: 968px) {
+            .footer-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        @media (max-width: 600px) {
+            .footer-grid { grid-template-columns: 1fr; }
+            .footer-bottom { flex-direction: column; gap: 1rem; text-align: center; }
+        }
     </style>
 </head>
 <body>
@@ -163,7 +248,7 @@
 
     <header>
         <h2>The Core of Precision Ag.</h2>
-        <p>A platform integrating Soil Intelligence, Plant Agronomy, and Water Management.</p>
+        <p>A integrating Soil Intelligence, Plant Agronomy, and Water Management.</p>
         <button class="cta-btn" onclick="location.href='#layer-a'">Initialize Dashboard</button>
     </header>
 
@@ -176,7 +261,7 @@
                 </h3>
                 <div class="feature-box" style="border-left: 5px solid var(--soil-color);">
                     <h4>Dynamic Nutrient Mapping</h4>
-                    <p>Real-time heatmaps of Nitrogen (N), Phosphorus (P), and Potassium (K) across your acreage.</p>
+                    <p>Real-time heatmaps of Nitrogen ($N$), Phosphorus ($P$), and Potassium ($K$) across your acreage.</p>
                 </div>
                 <div class="feature-box" style="border-left: 5px solid var(--soil-color);">
                     <h4>Predictive Mineralization AI</h4>
@@ -247,11 +332,49 @@
     </section>
 
     <footer>
-        <p>&copy; 2026 AgriCore Platforms. All layers fully operational.</p>
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <h2>Agri<span>Core</span></h2>
+                <p>Leading the 2026 agricultural revolution through precision data, spectral intelligence, and autonomous resource management.</p>
+                <div class="newsletter-form">
+                    <input type="email" placeholder="Farmer email updates...">
+                    <button>Join</button>
+                </div>
+            </div>
+            <div class="footer-column">
+                <h4>Platform</h4>
+                <ul>
+                    <li><a href="#layer-a">Soil Mapping</a></li>
+                    <li><a href="#layer-b">Spectral NDVI</a></li>
+                    <li><a href="#layer-c">Water Control</a></li>
+                    <li><a href="#">VRT Export</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="#">Documentation</a></li>
+                    <li><a href="#">API Reference</a></li>
+                    <li><a href="#">Sensor Setup</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Contact</h4>
+                <ul>
+                    <li>Email: contact@agricore.tech</li>
+                    <li>Phone: +1 (555) AGRI-DATA</li>
+                    <li>HQ: 1200 Innovation Way, Silicon Prairie</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 AgriCore Precision Systems. All Rights Reserved.</p>
+            <p>Status: All Systems Operational</p>
+        </div>
     </footer>
 
     <script>
-        // Layer A: Soil NPK Chart
         const ctxSoil = document.getElementById('soilChart').getContext('2d');
         new Chart(ctxSoil, {
             type: 'radar',
@@ -266,7 +389,6 @@
             }
         });
 
-        // Layer B: NDVI Chart
         const ctxNDVI = document.getElementById('ndviChart').getContext('2d');
         new Chart(ctxNDVI, {
             type: 'line',
@@ -282,7 +404,6 @@
             }
         });
 
-        // Layer C: Water Chart
         const ctxWater = document.getElementById('waterChart').getContext('2d');
         new Chart(ctxWater, {
             type: 'bar',
@@ -296,32 +417,24 @@
             }
         });
 
-        // Functional Logic: GenAI Analysis
         function handleAIAnalysis() {
             const text = document.getElementById('upload-text');
             text.innerHTML = "<b>Analyzing Image...</b>";
             setTimeout(() => {
-                text.innerHTML = "<b>Result:</b> Target identified as <i>Spodoptera frugiperda</i>. Suggesting Bio-Pesticide: Neem Extract.";
+                text.innerHTML = "<b>Result:</b> Target identified. Suggesting Bio-Pesticide: Neem Extract.";
                 text.style.color = "var(--plant-color)";
             }, 2000);
         }
 
-        // Functional Logic: VRT Export
         function exportVRT() {
-            alert("Generating VRT prescription files based on Layer A and Layer B data. Download will begin shortly.");
+            alert("Generating VRT prescription files. Download starting...");
         }
 
-        // Functional Logic: Water Pump Toggle
         function togglePump() {
             const status = document.getElementById('pump-status');
             const isChecked = document.getElementById('pumpSwitch').checked;
-            if(isChecked) {
-                status.innerText = "Status: AI Optimized (Pumping Active)";
-                status.style.color = "var(--water-color)";
-            } else {
-                status.innerText = "Status: Offline";
-                status.style.color = "var(--text-gray)";
-            }
+            status.innerText = isChecked ? "Status: AI Optimized (Pumping Active)" : "Status: Offline";
+            status.style.color = isChecked ? "var(--water-color)" : "var(--text-gray)";
         }
     </script>
 </body>
