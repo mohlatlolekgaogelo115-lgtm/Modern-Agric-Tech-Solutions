@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SA Soil AI • South African Soil Lab</title>
+    <title>TerraSoil Community • Africa-First Network</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -20,34 +20,37 @@
             font-family: 'Space Grotesk', sans-serif;
         }
         .hero-bg {
-            background: linear-gradient(135deg, #10b981 0%, #166534 100%);
+            background: linear-gradient(135deg, #166534 0%, #052e16 100%);
         }
-        .card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        .group-card {
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        .card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        .group-card:hover {
+            transform: scale(1.04) translateY(-6px);
         }
-        .modal {
-            animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        .insight-card {
+            transition: all 0.3s ease;
         }
-        @keyframes modalPop {
-            0% { transform: scale(0.8); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
+        .scientist-card {
+            transition: all 0.3s ease;
         }
-        .gauge {
-            background: conic-gradient(#10b981 var(--progress), #e5e7eb 0);
+        .scientist-card:hover {
+            box-shadow: 0 25px 50px -12px rgb(16 185 129 / 0.25);
         }
-        .soil-photo {
-            transition: all 0.4s ease;
+        .live-dot {
+            animation: pulse 2s infinite;
         }
-        .analysis-bar {
-            animation: growBar 1.2s ease forwards;
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        .map-pin {
+            animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
         }
     </style>
 </head>
-<body class="tail-container bg-emerald-50 text-slate-900 min-h-screen">
+<body class="tail-container bg-emerald-50 text-slate-900">
+
     <!-- NAVBAR -->
     <nav class="bg-white border-b border-emerald-100 sticky top-0 z-50">
         <div class="max-w-screen-2xl mx-auto px-8 py-5 flex items-center justify-between">
@@ -58,41 +61,35 @@
                     <span class="text-emerald-500 text-sm font-medium ml-1">AI</span>
                 </div>
             </div>
-            
-            <div class="flex items-center gap-x-8 text-sm font-medium">
-                <a href="#" onclick="switchTab(0)" class="nav-link text-emerald-700 font-semibold flex items-center gap-x-2 active">
+
+            <div class="flex items-center gap-x-9 text-sm font-medium">
+                <a href="#" onclick="window.location.href='index.html'" class="flex items-center gap-x-2 text-slate-500 hover:text-emerald-700">
                     <i class="fa-solid fa-gauge-high"></i> Dashboard
                 </a>
-                <a href="#" onclick="switchTab(1)" class="nav-link text-slate-500 hover:text-emerald-700 flex items-center gap-x-2">
+                <a href="#" onclick="window.location.href='analyze.html'" class="flex items-center gap-x-2 text-slate-500 hover:text-emerald-700">
                     <i class="fa-solid fa-upload"></i> Analyze
                 </a>
-                <a href="#" onclick="switchTab(2)" class="nav-link text-slate-500 hover:text-emerald-700 flex items-center gap-x-2">
-                    <i class="fa-solid fa-chart-line"></i> History
+                <a href="#" class="text-emerald-700 font-semibold flex items-center gap-x-2 border-b-2 border-emerald-600 pb-1">
+                    <i class="fa-solid fa-users"></i> Community
                 </a>
-                <a href="#" onclick="switchTab(3)" class="nav-link text-slate-500 hover:text-emerald-700 flex items-center gap-x-2">
-                    <i class="fa-solid fa-map"></i> My Fields
+                <a href="#" class="flex items-center gap-x-2 text-slate-500 hover:text-emerald-700">
+                    <i class="fa-solid fa-chart-line"></i> Insights Map
                 </a>
             </div>
 
             <div class="flex items-center gap-x-6">
-                <div class="relative">
-                    <input type="text" id="search" placeholder="Search fields or reports..." 
-                           class="bg-slate-100 border border-slate-200 focus:border-emerald-300 rounded-3xl py-2.5 pl-11 pr-5 text-sm w-72 focus:outline-none">
-                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-3 text-slate-400"></i>
-                </div>
-                
-                <button onclick="showNotifications()" 
-                        class="relative w-10 h-10 flex items-center justify-center text-slate-500 hover:text-emerald-600 transition-colors">
-                    <i class="fa-solid fa-bell text-xl"></i>
-                    <span id="notif-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">1</span>
+                <button onclick="showShareModal()" 
+                        class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-3xl text-sm font-semibold flex items-center gap-x-2 transition-all">
+                    <i class="fa-solid fa-share-nodes"></i>
+                    <span>Share Anonymised Data</span>
                 </button>
                 
                 <div class="flex items-center gap-x-3">
                     <div class="text-right">
                         <div class="font-semibold text-sm">Kgaogelo</div>
-                        <div class="text-emerald-600 text-xs font-medium">Johannesburg, Gauteng</div>
+                        <div class="text-emerald-600 text-xs">Johannesburg • Gauteng</div>
                     </div>
-                    <div class="w-9 h-9 bg-emerald-100 rounded-2xl overflow-hidden border border-emerald-200">
+                    <div class="w-9 h-9 bg-emerald-100 rounded-2xl overflow-hidden border-2 border-emerald-300">
                         <img src="https://picsum.photos/id/64/128/128" alt="Profile" class="w-full h-full object-cover">
                     </div>
                 </div>
@@ -102,726 +99,500 @@
 
     <div class="max-w-screen-2xl mx-auto flex">
         <!-- SIDEBAR -->
-        <div class="w-72 bg-white border-r border-emerald-100 min-h-[calc(100vh-73px)] p-6 hidden lg:flex flex-col">
+        <div class="w-80 bg-white border-r border-emerald-100 min-h-screen p-6 flex flex-col">
+            <div class="mb-10">
+                <div class="uppercase text-xs font-semibold tracking-widest text-emerald-700 mb-4 flex items-center gap-x-2">
+                    <span class="w-2 h-2 bg-emerald-500 rounded-full live-dot"></span>
+                    AFRICA-FIRST NETWORK
+                </div>
+                <div class="text-2xl font-semibold leading-none">12,847<br><span class="text-emerald-600 text-xl">farmers connected</span></div>
+                <div class="text-xs text-slate-400 mt-1">Across 9 provinces • 4 countries</div>
+            </div>
+
+            <!-- My Groups -->
             <div class="mb-8">
-                <div class="flex items-center justify-between text-xs uppercase tracking-widest font-medium text-slate-400 mb-3 px-3">
-                    <span>Current Field</span>
+                <div class="flex justify-between items-center mb-4 px-1">
+                    <span class="text-sm font-semibold text-slate-500">My Regional Groups</span>
+                    <button onclick="showAllGroups()" class="text-emerald-600 text-xs font-medium">All →</button>
                 </div>
-                <div onclick="selectField()" class="bg-emerald-50 border border-emerald-200 rounded-3xl p-5 cursor-pointer card">
-                    <div class="flex items-center gap-x-3">
-                        <div class="text-4xl">🌾</div>
-                        <div>
-                            <div class="font-semibold">Field Alpha • Duplex Soil</div>
-                            <div class="text-emerald-600 text-sm">Bronkhorstspruit, Gauteng</div>
-                            <div class="flex items-center gap-x-2 text-xs mt-2">
-                                <span class="px-3 py-1 bg-white rounded-2xl font-medium text-emerald-700">Last scan: 3 days ago</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <div id="my-groups" class="space-y-3"></div>
             </div>
 
-            <div class="space-y-6">
-                <div>
-                    <div class="text-xs uppercase tracking-widest font-medium text-slate-400 mb-3 px-3">Quick Actions</div>
-                    <button onclick="showUploadModal()" 
-                            class="w-full flex items-center gap-x-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-4 px-6 rounded-3xl transition-all active:scale-95">
-                        <i class="fa-solid fa-cloud-arrow-up text-xl"></i>
-                        <span>Upload New Data</span>
-                    </button>
-                </div>
-
-                <div class="bg-slate-50 rounded-3xl p-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <span class="text-sm font-medium">Soil Health Score</span>
-                        <span id="sidebar-score" class="text-3xl font-semibold text-emerald-600">82</span>
+            <!-- Quick Stats -->
+            <div class="bg-emerald-50 rounded-3xl p-6 mt-auto">
+                <div class="text-xs uppercase tracking-widest text-slate-400 mb-3">This month’s collective impact</div>
+                <div class="grid grid-cols-2 gap-6 text-center">
+                    <div>
+                        <div class="text-4xl font-semibold text-emerald-700">214 t</div>
+                        <div class="text-xs text-slate-500">Lime recommended</div>
                     </div>
-                    <div class="h-2.5 bg-slate-200 rounded-3xl overflow-hidden">
-                        <div id="sidebar-progress" class="h-full bg-gradient-to-r from-emerald-500 to-teal-400 w-[82%] rounded-3xl"></div>
-                    </div>
-                    <div class="text-xs text-emerald-600 mt-2 flex items-center gap-x-1">
-                        <i class="fa-solid fa-arrow-trend-up"></i> +4 since last month
+                    <div>
+                        <div class="text-4xl font-semibold text-emerald-700">+9.4%</div>
+                        <div class="text-xs text-slate-500">Avg yield gain</div>
                     </div>
                 </div>
-
-                <!-- IoT Status -->
-                <div class="bg-white border border-emerald-100 rounded-3xl p-5 text-xs">
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="font-medium flex items-center gap-x-2">
-                            <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-                            IoT Sensors Online
-                        </span>
-                        <span class="text-emerald-600 font-medium">4 probes</span>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4 text-[10px]">
-                        <div>Moisture: <span id="live-moisture" class="font-semibold">19%</span></div>
-                        <div>Temp: <span id="live-temp" class="font-semibold">23.4°C</span></div>
-                    </div>
-                    <button onclick="simulateIoT()" 
-                            class="mt-4 text-xs w-full py-2 border border-emerald-200 hover:border-emerald-300 rounded-2xl text-emerald-700 font-medium">
-                        Simulate new reading
-                    </button>
-                </div>
-            </div>
-
-            <div class="mt-auto pt-8 border-t border-slate-100">
-                <div class="text-xs text-slate-400">Powered by Liebig’s Law • QUEFTS • Pedotransfer Functions</div>
             </div>
         </div>
 
         <!-- MAIN CONTENT -->
-        <div class="flex-1 p-8 lg:p-12">
-            <!-- HERO BANNER / ALERT -->
-            <div id="alert-banner" 
-                 class="mb-10 bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-3xl p-6 flex items-center justify-between shadow-xl">
-                <div class="flex items-center gap-x-4">
-                    <div class="w-12 h-12 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center text-3xl">⚠️</div>
-                    <div>
-                        <div class="font-semibold text-lg">Urgent: Gauteng duplex soil acidifying</div>
-                        <div class="text-white/90 text-sm">pH dropped to 5.3. Apply 2.5 t/ha agricultural lime immediately to prevent 22% yield loss.</div>
+        <div class="flex-1 p-10">
+            <!-- HERO -->
+            <div class="hero-bg text-white rounded-3xl px-12 py-16 mb-12 relative overflow-hidden">
+                <div class="max-w-xl">
+                    <div class="inline-flex items-center gap-x-2 bg-white/20 backdrop-blur-md px-5 py-2 rounded-3xl text-sm mb-6">
+                        <span class="text-amber-300">🌍</span>
+                        <span class="font-medium">Africa-First • Farmer-Led</span>
+                    </div>
+                    <h1 class="text-6xl leading-none font-semibold tracking-tighter logo-font mb-4">
+                        Together we heal<br>our soils
+                    </h1>
+                    <p class="text-emerald-100 text-xl">Share anonymised data. Get local advice. Build resilient African agriculture.</p>
+                    
+                    <div class="mt-10 flex gap-x-4">
+                        <button onclick="joinFeaturedGroup()" 
+                                class="bg-white text-emerald-800 font-semibold px-10 py-4 rounded-3xl flex items-center gap-x-3 hover:shadow-xl transition-all">
+                            <i class="fa-solid fa-handshake"></i>
+                            Join Gauteng Farmers
+                        </button>
+                        <button onclick="showShareModal()" 
+                                class="border border-white/70 hover:bg-white/10 font-medium px-8 py-4 rounded-3xl transition-all">
+                            Share my data anonymously
+                        </button>
                     </div>
                 </div>
-                <button onclick="dismissAlert()" 
-                        class="bg-white text-amber-700 hover:bg-amber-50 px-8 py-3 rounded-3xl font-semibold text-sm transition-all">Apply now →</button>
+                
+                <!-- Decorative map pins -->
+                <div class="absolute bottom-8 right-12 text-6xl opacity-30">🇿🇦</div>
+                <div class="absolute top-12 right-32 w-5 h-5 bg-white rounded-full flex items-center justify-center map-pin">
+                    <div class="w-2 h-2 bg-emerald-400 rounded-full"></div>
+                </div>
             </div>
 
-            <!-- DASHBOARD OVERVIEW -->
-            <div class="grid grid-cols-12 gap-6">
-                <!-- METRIC CARDS -->
-                <div class="col-span-12 lg:col-span-8 grid grid-cols-2 lg:grid-cols-4 gap-6">
-                    <!-- pH -->
-                    <div onclick="showDetailModal('pH')" class="card bg-white rounded-3xl p-6 shadow-sm cursor-pointer">
-                        <div class="flex justify-between">
-                            <div>
-                                <div class="text-slate-400 text-xs font-medium tracking-widest">SOIL pH</div>
-                                <div id="ph-value" class="text-5xl font-semibold text-slate-800 mt-2">5.3</div>
-                                <div class="text-rose-500 text-sm font-medium flex items-center gap-x-1 mt-1">
-                                    <i class="fa-solid fa-arrow-down"></i> Acidic
-                                </div>
-                            </div>
-                            <div class="w-20 h-20 rounded-2xl gauge flex items-center justify-center text-xs font-bold text-slate-700" 
-                                 style="--progress: 53%;">
-                                <span class="text-center leading-none">5.3<br><span class="text-[10px]">pH</span></span>
-                            </div>
-                        </div>
+            <div class="grid grid-cols-12 gap-8">
+                <!-- REGIONAL GROUPS -->
+                <div class="col-span-12 lg:col-span-5">
+                    <div class="flex items-center justify-between mb-6">
+                        <span class="text-xl font-semibold">Regional Groups</span>
+                        <span onclick="showAllGroups()" class="text-emerald-600 text-sm cursor-pointer flex items-center gap-x-1">
+                            Explore all <i class="fa-solid fa-arrow-right"></i>
+                        </span>
                     </div>
-
-                    <!-- NPK -->
-                    <div class="card bg-white rounded-3xl p-6 shadow-sm">
-                        <div class="text-slate-400 text-xs font-medium tracking-widest mb-4">NPK (kg/ha)</div>
-                        <div class="flex justify-between items-end">
-                            <div class="text-center">
-                                <div class="text-emerald-600 font-bold text-3xl" id="n-value">42</div>
-                                <div class="text-xs text-slate-500">N</div>
-                            </div>
-                            <div class="text-center">
-                                <div class="text-emerald-600 font-bold text-3xl" id="p-value">28</div>
-                                <div class="text-xs text-slate-500">P</div>
-                            </div>
-                            <div class="text-center">
-                                <div class="text-emerald-600 font-bold text-3xl" id="k-value">165</div>
-                                <div class="text-xs text-slate-500">K</div>
-                            </div>
-                        </div>
-                        <div class="mt-6 text-xs bg-emerald-50 text-emerald-700 px-4 py-2 rounded-2xl inline-flex items-center">
-                            <i class="fa-solid fa-seedling mr-2"></i> N is limiting (Liebig’s Law)
-                        </div>
-                    </div>
-
-                    <!-- Moisture & Temp -->
-                    <div class="card bg-white rounded-3xl p-6 shadow-sm col-span-2 lg:col-span-1">
-                        <div class="flex justify-between h-full flex-col">
-                            <div>
-                                <div class="flex items-center gap-x-2 text-xs font-medium text-slate-400">
-                                    <i class="fa-solid fa-droplet"></i> MOISTURE
-                                </div>
-                                <div id="moisture-value" class="text-6xl font-semibold mt-1 text-sky-600">19%</div>
-                            </div>
-                            <div class="text-emerald-600 text-sm">Optimal for maize</div>
-                        </div>
-                    </div>
-
-                    <div class="card bg-white rounded-3xl p-6 shadow-sm col-span-2 lg:col-span-1">
-                        <div class="flex justify-between h-full flex-col">
-                            <div>
-                                <div class="flex items-center gap-x-2 text-xs font-medium text-slate-400">
-                                    <i class="fa-solid fa-temperature-half"></i> TEMP
-                                </div>
-                                <div id="temp-value" class="text-6xl font-semibold mt-1">23.8°C</div>
-                            </div>
-                            <div class="text-amber-600 text-sm">+1.2°C since yesterday</div>
-                        </div>
-                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-6" id="regional-groups"></div>
                 </div>
 
-                <!-- HEALTH SCORE & PHOTO -->
-                <div class="col-span-12 lg:col-span-4 bg-white rounded-3xl p-7 shadow-sm card flex flex-col">
-                    <div class="flex items-center justify-between">
+                <!-- COLLECTIVE INSIGHTS -->
+                <div class="col-span-12 lg:col-span-7">
+                    <div class="flex justify-between items-end mb-6">
                         <div>
-                            <div class="uppercase text-xs tracking-widest text-slate-400">Overall Health</div>
-                            <div id="health-score" class="text-[72px] leading-none font-semibold text-emerald-600">82</div>
-                            <div class="text-emerald-500 text-sm -mt-2">/100 • Improving</div>
+                            <span class="text-xl font-semibold">Collective Insights</span>
+                            <span class="ml-3 text-xs bg-emerald-100 text-emerald-700 px-4 py-1 rounded-3xl">Live • Anonymised</span>
                         </div>
-                        <div class="text-right">
-                            <div id="soil-photo-preview" 
-                                 class="w-36 h-36 bg-cover bg-center rounded-3xl shadow-inner border-4 border-white soil-photo"
-                                 style="background-image: url('https://picsum.photos/id/201/400/400')"></div>
-                            <div onclick="triggerPhotoUpload()" 
-                                 class="text-emerald-600 text-xs font-medium mt-3 flex items-center gap-x-1 cursor-pointer hover:underline">
-                                <i class="fa-solid fa-camera"></i> Update soil photo
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-auto pt-8 border-t text-xs">
-                        <div class="flex justify-between mb-2">
-                            <span class="text-slate-500">QUEFTS Nutrient Balance</span>
-                            <span id="quefits-score" class="font-semibold text-emerald-700">91%</span>
-                        </div>
-                        <div class="h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                            <div class="h-full bg-gradient-to-r from-emerald-400 to-teal-500 w-[91%]"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- INTERPRETATION PANEL -->
-                <div class="col-span-12 lg:col-span-7 bg-white rounded-3xl p-8 shadow-sm">
-                    <div class="flex items-center justify-between mb-6">
-                        <div class="font-semibold text-lg flex items-center gap-x-2">
-                            <span class="text-emerald-600">AI Interpretation</span>
-                            <span class="text-xs bg-emerald-100 text-emerald-700 px-3 py-1 rounded-2xl">Updated just now</span>
-                        </div>
-                        <button onclick="runFullAnalysis()" 
-                                class="flex items-center gap-x-2 text-sm font-medium bg-emerald-50 hover:bg-emerald-100 px-5 py-3 rounded-3xl transition-colors">
-                            <i class="fa-solid fa-wand-magic-sparkles"></i> Run new analysis
+                        <button onclick="refreshInsights()" 
+                                class="text-slate-400 hover:text-emerald-600 text-sm flex items-center gap-x-2">
+                            <i class="fa-solid fa-rotate"></i> Refresh
                         </button>
                     </div>
                     
-                    <div id="interpretation-text" class="prose prose-slate text-sm leading-relaxed">
-                        Your Gauteng duplex soil (clay loam over sandy clay) shows Nitrogen as the primary limiting nutrient per <strong>Liebig’s Law of the Minimum</strong>. 
-                        Current pH 5.3 is below optimum for maize. QUEFTS model predicts 18% yield increase if NPK balanced to 80-40-180 kg/ha. 
-                        Pedotransfer functions estimate water holding capacity at 26% (good for dry spells).
+                    <div id="insights-feed" class="space-y-5 max-h-[620px] overflow-y-auto pr-4 custom-scroll"></div>
+                </div>
+
+                <!-- SCIENTIST DIRECTORY -->
+                <div class="col-span-12 bg-white rounded-3xl shadow-sm p-8">
+                    <div class="flex items-center justify-between mb-8">
+                        <div class="font-semibold text-2xl">Verified Soil Scientists</div>
+                        <div class="relative w-72">
+                            <input id="scientist-search" 
+                                   onkeyup="filterScientists()"
+                                   type="text" 
+                                   placeholder="Search by name or province..." 
+                                   class="w-full bg-slate-100 border border-transparent focus:border-emerald-300 rounded-3xl py-4 pl-14 text-sm">
+                            <i class="fa-solid fa-magnifying-glass absolute left-6 top-4 text-slate-400"></i>
+                        </div>
                     </div>
                     
-                    <div class="mt-8 grid grid-cols-3 gap-4">
-                        <div class="bg-emerald-50 rounded-2xl p-5 text-center">
-                            <div class="text-emerald-700 text-xs font-medium">RECOMMENDED</div>
-                            <div class="font-semibold text-2xl mt-2 text-emerald-800">2.5 t/ha</div>
-                            <div class="text-xs text-slate-500">Agricultural lime</div>
-                        </div>
-                        <div class="bg-amber-50 rounded-2xl p-5 text-center">
-                            <div class="text-amber-700 text-xs font-medium">NEXT ACTION</div>
-                            <div class="font-semibold text-2xl mt-2 text-amber-800">45 kg/ha</div>
-                            <div class="text-xs text-slate-500">Urea (N source)</div>
-                        </div>
-                        <div class="bg-sky-50 rounded-2xl p-5 text-center">
-                            <div class="text-sky-700 text-xs font-medium">WATER ADVICE</div>
-                            <div class="font-semibold text-2xl mt-2 text-sky-800">Irrigate 18 mm</div>
-                            <div class="text-xs text-slate-500">Next 48 hrs</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- TREND CHART -->
-                <div class="col-span-12 lg:col-span-5 bg-white rounded-3xl p-8 shadow-sm">
-                    <div class="flex items-center justify-between mb-6">
-                        <span class="font-semibold">Soil Trends • Last 90 days</span>
-                        <select id="chart-select" onchange="updateChart()" 
-                                class="text-xs bg-slate-100 border-0 rounded-2xl py-2 px-4 focus:ring-0">
-                            <option value="ph">pH Trend</option>
-                            <option value="npk">NPK Trend</option>
-                            <option value="moisture">Moisture Trend</option>
-                        </select>
-                    </div>
-                    <canvas id="trend-chart" height="140"></canvas>
-                </div>
-
-                <!-- HISTORY TABLE -->
-                <div class="col-span-12 bg-white rounded-3xl overflow-hidden shadow-sm">
-                    <div class="px-8 py-6 border-b flex items-center justify-between bg-slate-50">
-                        <span class="font-semibold text-lg">Field History • 6 analyses</span>
-                        <button onclick="exportReport()" 
-                                class="text-emerald-600 text-sm flex items-center gap-x-2 hover:text-emerald-700">
-                            <i class="fa-solid fa-download"></i> Export CSV
-                        </button>
-                    </div>
-                    <table class="w-full">
-                        <thead>
-                            <tr class="border-b text-xs uppercase text-slate-400 font-medium">
-                                <th class="py-5 px-8 text-left">Date</th>
-                                <th class="py-5 px-8 text-left">pH</th>
-                                <th class="py-5 px-8 text-left">N</th>
-                                <th class="py-5 px-8 text-left">Health Score</th>
-                                <th class="py-5 px-8 text-left">Limiting Factor</th>
-                                <th class="py-5 px-8 text-right">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="history-body" class="text-sm divide-y"></tbody>
-                    </table>
+                    <div id="scientists-grid" class="grid grid-cols-2 lg:grid-cols-4 gap-6"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- UPLOAD MODAL -->
-    <div id="upload-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur flex items-center justify-center z-[999]">
-        <div class="modal bg-white rounded-3xl max-w-lg w-full mx-4 shadow-2xl">
+    <!-- SHARE DATA MODAL -->
+    <div id="share-modal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-[999]">
+        <div class="bg-white rounded-3xl max-w-xl w-full mx-4 overflow-hidden">
             <div class="px-8 py-6 border-b flex items-center justify-between">
-                <span class="font-semibold text-xl">Upload Soil Data</span>
-                <button onclick="closeUploadModal()" class="text-3xl leading-none text-slate-300 hover:text-slate-500">×</button>
+                <span class="font-semibold text-2xl">Share Anonymised Data</span>
+                <button onclick="closeShareModal()" class="text-4xl leading-none text-slate-300 hover:text-slate-400">×</button>
             </div>
             
             <div class="p-8">
-                <div class="flex border-b">
-                    <button onclick="switchUploadTab(0)" id="tab-0"
-                            class="upload-tab flex-1 py-4 text-center border-b-2 border-emerald-600 text-emerald-700 font-medium">📸 Soil Photo</button>
-                    <button onclick="switchUploadTab(1)" id="tab-1"
-                            class="upload-tab flex-1 py-4 text-center text-slate-400">📄 Lab Report</button>
-                    <button onclick="switchUploadTab(2)" id="tab-2"
-                            class="upload-tab flex-1 py-4 text-center text-slate-400">📡 IoT Data</button>
-                </div>
+                <textarea id="share-text" rows="4" 
+                          class="w-full border border-slate-200 rounded-3xl p-6 text-sm focus:outline-none focus:border-emerald-300"
+                          placeholder="Example: My Johannesburg ward soil lost 12% organic matter since 2020..."></textarea>
                 
-                <!-- PHOTO TAB -->
-                <div id="upload-content-0" class="py-10">
-                    <div id="photo-dropzone" 
-                         class="border-2 border-dashed border-emerald-200 hover:border-emerald-300 rounded-3xl h-64 flex flex-col items-center justify-center cursor-pointer transition-colors"
-                         onclick="document.getElementById('photo-input').click()">
-                        <i class="fa-solid fa-cloud-arrow-up text-5xl text-emerald-300 mb-4"></i>
-                        <p class="font-medium text-slate-500">Drop soil photo here or click to upload</p>
-                        <p class="text-xs text-slate-400 mt-1">JPG, PNG • Max 10MB</p>
-                        <input type="file" id="photo-input" accept="image/*" class="hidden" onchange="handlePhotoUpload(event)">
+                <div class="mt-6 grid grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-500 mb-2">Province</label>
+                        <select id="share-province" class="w-full border border-slate-200 rounded-3xl py-4 px-6 text-sm">
+                            <option>Gauteng</option>
+                            <option>Limpopo</option>
+                            <option>KwaZulu-Natal</option>
+                            <option>Western Cape</option>
+                        </select>
                     </div>
-                    
-                    <div id="photo-preview-container" class="hidden mt-6">
-                        <img id="photo-preview" class="rounded-3xl w-full max-h-80 object-cover shadow" alt="Soil preview">
-                        <button onclick="analyzePhoto()" 
-                                class="mt-6 w-full py-4 bg-emerald-600 text-white font-semibold rounded-3xl active:scale-95 transition-all">
-                            Analyze with AI Vision
-                        </button>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-500 mb-2">Data Type</label>
+                        <select id="share-type" class="w-full border border-slate-200 rounded-3xl py-4 px-6 text-sm">
+                            <option>Organic Matter</option>
+                            <option>pH Trend</option>
+                            <option>NPK Levels</option>
+                            <option>Water Retention</option>
+                        </select>
                     </div>
-                </div>
-                
-                <!-- LAB TAB -->
-                <div id="upload-content-1" class="hidden py-10">
-                    <div class="space-y-6">
-                        <div>
-                            <label class="block text-xs font-medium mb-2 text-slate-500">Paste or upload CSV / PDF</label>
-                            <div class="border border-slate-200 rounded-3xl p-6 text-center text-slate-400 text-sm">
-                                Drag lab results here (demo: auto-filled)
-                            </div>
-                        </div>
-                        <button onclick="fakeLabUpload()" 
-                                class="w-full py-4 bg-emerald-600 text-white font-semibold rounded-3xl">
-                            Use Sample Gauteng Lab Report
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- IOT TAB -->
-                <div id="upload-content-2" class="hidden py-10 text-center">
-                    <div class="text-emerald-500 mb-6">
-                        <i class="fa-solid fa-satellite-dish text-6xl"></i>
-                    </div>
-                    <p class="font-medium">IoT probes connected</p>
-                    <p class="text-xs text-slate-400 mt-1">Moisture, NPK, Temp, EC</p>
-                    <button onclick="fakeIoTUpload()" 
-                            class="mt-10 w-full py-4 bg-emerald-600 text-white font-semibold rounded-3xl">
-                        Import latest sensor reading
-                    </button>
                 </div>
             </div>
             
-            <div class="p-8 border-t flex justify-end gap-x-3">
-                <button onclick="closeUploadModal()" 
-                        class="px-8 py-3.5 text-slate-500 font-medium">Cancel</button>
+            <div class="p-8 border-t flex justify-between items-center bg-slate-50">
+                <div class="text-xs text-slate-400 flex items-center gap-x-2">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    100% anonymised &amp; verified
+                </div>
+                <button onclick="submitAnonymisedData()" 
+                        class="bg-emerald-600 hover:bg-emerald-700 text-white px-10 py-4 rounded-3xl font-semibold flex items-center gap-x-3">
+                    Publish to Network
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- ANALYSIS LOADING MODAL -->
-    <div id="loading-modal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-[1000]">
-        <div class="bg-white rounded-3xl w-96 text-center p-12">
-            <div class="w-16 h-16 mx-auto border-4 border-emerald-200 border-t-emerald-600 animate-spin rounded-full"></div>
-            <div class="mt-8 font-medium">Analyzing with scientific models...</div>
-            <div class="text-xs text-slate-400 mt-2">Liebig’s • QUEFTS • Pedotransfer</div>
-            <div class="h-1.5 bg-emerald-100 rounded-3xl mt-8 overflow-hidden">
-                <div id="loading-bar" class="h-full w-0 bg-emerald-500 transition-all duration-1000"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- DETAIL MODAL -->
-    <div id="detail-modal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-[999]">
-        <div class="modal bg-white max-w-md w-full rounded-3xl p-8">
-            <div class="flex justify-between items-center mb-8">
-                <span id="modal-title" class="font-semibold text-2xl"></span>
-                <button onclick="closeDetailModal()" class="text-3xl text-slate-300">×</button>
-            </div>
-            <div id="modal-content" class="text-slate-600 leading-relaxed"></div>
-            
-            <div class="mt-10 flex justify-end">
-                <button onclick="closeDetailModal()" 
-                        class="px-10 py-4 bg-slate-100 hover:bg-slate-200 rounded-3xl font-medium">Close</button>
+    <!-- SCIENTIST PROFILE MODAL -->
+    <div id="scientist-modal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-[999]">
+        <div class="bg-white rounded-3xl max-w-md w-full mx-4">
+            <div class="p-8">
+                <div class="flex justify-end">
+                    <button onclick="closeScientistModal()" class="text-3xl text-slate-300">×</button>
+                </div>
+                <div id="modal-scientist-content" class="text-center"></div>
             </div>
         </div>
     </div>
 
     <!-- TOAST -->
-    <div id="toast" class="hidden fixed bottom-6 right-6 bg-emerald-800 text-white rounded-3xl shadow-2xl px-6 py-4 flex items-center gap-x-3">
-        <i class="fa-solid fa-check-circle"></i>
-        <span id="toast-text" class="font-medium"></span>
+    <div id="toast" class="hidden fixed bottom-8 right-8 bg-emerald-800 text-white rounded-3xl px-7 py-4 flex items-center gap-x-3 shadow-2xl">
+        <i class="fa-solid fa-check-circle text-2xl"></i>
+        <span id="toast-text" class="font-medium pr-6"></span>
     </div>
 
     <script>
-        // Tailwind script already loaded via CDN
-        function initTailwind() {
-            // No extra config needed
-        }
-
         // Sample data
-        let currentData = {
-            ph: 5.3,
-            n: 42,
-            p: 28,
-            k: 165,
-            moisture: 19,
-            temp: 23.8,
-            health: 82,
-            quefts: 91,
-            limiting: "Nitrogen",
-            photo: "https://picsum.photos/id/201/600/600"
-        };
-
-        let historyData = [
-            { date: "2026-02-15", ph: 5.3, n: 42, health: 82, limiting: "Nitrogen" },
-            { date: "2026-01-20", ph: 5.5, n: 55, health: 78, limiting: "Phosphorus" },
-            { date: "2025-12-10", ph: 5.8, n: 68, health: 85, limiting: "None" },
-            { date: "2025-11-05", ph: 6.1, n: 72, health: 79, limiting: "Potassium" },
+        const regionalGroups = [
+            { id: 1, name: "Gauteng Farmers", location: "Johannesburg & surrounds", members: 2840, activity: "3 new insights today", emoji: "🌾", joined: true },
+            { id: 2, name: "Limpopo Smallholders", location: "Polokwane • Vhembe", members: 1650, activity: "Organic matter map updated", emoji: "🥜", joined: false },
+            { id: 3, name: "KZN Maize Growers", location: "Pietermaritzburg", members: 920, activity: "Lime trial results", emoji: "🌽", joined: false },
+            { id: 4, name: "Western Cape Vineyards", location: "Stellenbosch", members: 470, activity: "pH trends shared", emoji: "🍇", joined: false }
         ];
 
-        let trendChart;
+        const insightsData = [
+            {
+                id: 1,
+                title: "Johannesburg Ward 112",
+                text: "Soils lost 15% organic matter since 2015. Average now 1.8%.",
+                province: "Gauteng",
+                time: "11m ago",
+                trend: "-15%",
+                emoji: "📉"
+            },
+            {
+                id: 2,
+                title: "Limpopo • Mopani District",
+                text: "Collective data shows 28% of smallholder fields now below 5.8 pH.",
+                province: "Limpopo",
+                time: "47m ago",
+                trend: "pH alert",
+                emoji: "⚠️"
+            },
+            {
+                id: 3,
+                title: "Free State • Bloemfontein",
+                text: "Nitrogen use efficiency improved 19% after QUEFTS-guided applications.",
+                province: "Free State",
+                time: "2h ago",
+                trend: "+19%",
+                emoji: "📈"
+            }
+        ];
 
-        function renderHistory() {
-            const tbody = document.getElementById("history-body");
-            tbody.innerHTML = "";
-            historyData.forEach((entry, i) => {
-                const row = document.createElement("tr");
-                row.className = "hover:bg-emerald-50 transition-colors cursor-pointer";
-                row.innerHTML = `
-                    <td class="py-6 px-8 font-medium">${entry.date}</td>
-                    <td class="py-6 px-8">${entry.ph}</td>
-                    <td class="py-6 px-8">${entry.n}</td>
-                    <td class="py-6 px-8">
-                        <span class="inline-flex items-center px-4 py-1 bg-emerald-100 text-emerald-700 rounded-2xl text-xs font-medium">${entry.health}</span>
-                    </td>
-                    <td class="py-6 px-8 text-slate-500">${entry.limiting}</td>
-                    <td class="py-6 px-8 text-right">
-                        <button onclick="loadHistoryEntry(${i}); event.stopImmediatePropagation();" 
-                                class="text-emerald-600 hover:text-emerald-700 text-xs font-medium">Load</button>
-                    </td>
+        const scientists = [
+            {
+                id: 1,
+                name: "Dr. Thabo Mokoena",
+                title: "Soil Fertility Specialist",
+                location: "Pretoria, Gauteng",
+                expertise: "NPK • Lime • Conservation",
+                verified: true,
+                avatar: "https://picsum.photos/id/64/300/300",
+                bio: "15 years working with Gauteng duplex soils. Helped 400+ farms."
+            },
+            {
+                id: 2,
+                name: "Prof. Naledi Khumalo",
+                title: "Pedology & Water Retention",
+                location: "Polokwane, Limpopo",
+                expertise: "Smallholder systems • Clay soils",
+                verified: true,
+                avatar: "https://picsum.photos/id/201/300/300",
+                bio: "Author of Limpopo Soil Health Guide 2024"
+            },
+            {
+                id: 3,
+                name: "Dr. Sipho Ndlovu",
+                title: "Soil Microbiologist",
+                location: "Durban, KZN",
+                expertise: "Organic matter • Cover crops",
+                verified: true,
+                avatar: "https://picsum.photos/id/1005/300/300",
+                bio: "Runs mobile soil labs for rural cooperatives"
+            },
+            {
+                id: 4,
+                name: "Dr. Aisha Patel",
+                title: "Precision Agriculture",
+                location: "Cape Town",
+                expertise: "IoT sensors • QUEFTS modelling",
+                verified: true,
+                avatar: "https://picsum.photos/id/1011/300/300",
+                bio: "Western Cape representative – Soil Science Society of SA"
+            }
+        ];
+
+        function renderMyGroups() {
+            const container = document.getElementById("my-groups");
+            container.innerHTML = "";
+            regionalGroups.filter(g => g.joined).forEach(group => {
+                const div = document.createElement("div");
+                div.className = "flex items-center gap-x-4 bg-emerald-50 rounded-3xl p-4 cursor-pointer";
+                div.innerHTML = `
+                    <div class="text-4xl">${group.emoji}</div>
+                    <div class="flex-1">
+                        <div class="font-semibold text-sm">${group.name}</div>
+                        <div class="text-xs text-emerald-600">${group.members} members</div>
+                    </div>
                 `;
-                row.onclick = () => loadHistoryEntry(i);
-                tbody.appendChild(row);
+                div.onclick = () => showToast(`Opened ${group.name} chat`);
+                container.appendChild(div);
             });
         }
 
-        function loadHistoryEntry(idx) {
-            const entry = historyData[idx];
-            currentData.ph = entry.ph;
-            currentData.n = entry.n;
-            currentData.health = entry.health;
-            currentData.limiting = entry.limiting;
-            updateAllUI();
-            showToast("History entry loaded");
-            closeUploadModal();
+        function renderRegionalGroups() {
+            const container = document.getElementById("regional-groups");
+            container.innerHTML = "";
+            regionalGroups.forEach(group => {
+                const div = document.createElement("div");
+                div.className = `group-card bg-white border border-emerald-100 rounded-3xl p-6 cursor-pointer ${group.joined ? 'ring-2 ring-emerald-600' : ''}`;
+                div.innerHTML = `
+                    <div class="flex justify-between">
+                        <div class="text-5xl">${group.emoji}</div>
+                        ${group.joined ? `<span class="text-xs bg-emerald-100 text-emerald-700 px-3 h-6 rounded-2xl flex items-center">MEMBER</span>` : ''}
+                    </div>
+                    <div class="mt-6 font-semibold text-lg leading-tight">${group.name}</div>
+                    <div class="text-xs text-slate-400 mt-1">${group.location}</div>
+                    
+                    <div class="mt-8 flex items-center justify-between text-xs">
+                        <div class="flex items-center gap-x-1">
+                            <i class="fa-solid fa-users text-emerald-500"></i>
+                            <span class="font-medium">${group.members}</span>
+                        </div>
+                        <div onclick="toggleJoin(${group.id}); event.stopImmediatePropagation();" 
+                             class="px-6 py-2 rounded-3xl font-medium text-xs transition-all ${group.joined ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 hover:bg-emerald-600 hover:text-white'}">
+                            ${group.joined ? 'Leave' : 'Join'}
+                        </div>
+                    </div>
+                `;
+                div.onclick = () => showToast(`Welcome to ${group.name}`);
+                container.appendChild(div);
+            });
         }
 
-        function updateAllUI() {
-            document.getElementById("ph-value").textContent = currentData.ph;
-            document.getElementById("n-value").textContent = currentData.n;
-            document.getElementById("p-value").textContent = currentData.p;
-            document.getElementById("k-value").textContent = currentData.k;
-            document.getElementById("moisture-value").textContent = currentData.moisture + "%";
-            document.getElementById("temp-value").textContent = currentData.temp + "°C";
-            document.getElementById("health-score").textContent = currentData.health;
-            document.getElementById("quefits-score").textContent = currentData.quefits + "%";
-            document.getElementById("sidebar-score").textContent = currentData.health;
-            document.getElementById("sidebar-progress").style.width = currentData.health + "%";
-            document.getElementById("soil-photo-preview").style.backgroundImage = `url('${currentData.photo}')`;
+        function toggleJoin(id) {
+            const group = regionalGroups.find(g => g.id === id);
+            if (group) {
+                group.joined = !group.joined;
+                renderRegionalGroups();
+                renderMyGroups();
+                showToast(group.joined ? `Welcome to ${group.name}!` : `Left ${group.name}`);
+            }
+        }
+
+        function renderInsights() {
+            const container = document.getElementById("insights-feed");
+            container.innerHTML = "";
+            insightsData.forEach(insight => {
+                const div = document.createElement("div");
+                div.className = "insight-card bg-white border border-emerald-100 rounded-3xl p-6 flex gap-x-6";
+                div.innerHTML = `
+                    <div class="text-4xl w-12">${insight.emoji}</div>
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between">
+                            <div class="font-semibold">${insight.title}</div>
+                            <div class="text-xs text-slate-400">${insight.time}</div>
+                        </div>
+                        <div class="mt-3 text-slate-600 leading-snug">${insight.text}</div>
+                        <div class="mt-4 flex items-center gap-x-2">
+                            <span class="px-4 py-1 bg-emerald-50 text-emerald-700 text-xs rounded-3xl">${insight.province}</span>
+                            <span class="text-emerald-600 text-sm font-medium">${insight.trend}</span>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function renderScientists(filtered = scientists) {
+            const container = document.getElementById("scientists-grid");
+            container.innerHTML = "";
+            filtered.forEach(scientist => {
+                const div = document.createElement("div");
+                div.className = "scientist-card bg-white border border-slate-100 rounded-3xl overflow-hidden cursor-pointer";
+                div.innerHTML = `
+                    <img src="${scientist.avatar}" class="w-full h-44 object-cover">
+                    <div class="p-5">
+                        <div class="flex items-center gap-x-2">
+                            <span class="font-semibold">${scientist.name}</span>
+                            ${scientist.verified ? `<i class="fa-solid fa-circle-check text-emerald-500"></i>` : ''}
+                        </div>
+                        <div class="text-xs text-slate-500">${scientist.title}</div>
+                        <div class="text-xs text-emerald-600 mt-4">${scientist.location}</div>
+                        <div class="text-[10px] text-slate-400 mt-1">${scientist.expertise}</div>
+                    </div>
+                `;
+                div.onclick = () => showScientistModal(scientist);
+                container.appendChild(div);
+            });
+        }
+
+        function filterScientists() {
+            const term = document.getElementById("scientist-search").value.toLowerCase();
+            const filtered = scientists.filter(s => 
+                s.name.toLowerCase().includes(term) || 
+                s.location.toLowerCase().includes(term)
+            );
+            renderScientists(filtered);
+        }
+
+        function showScientistModal(scientist) {
+            const modal = document.getElementById("scientist-modal");
+            const content = document.getElementById("modal-scientist-content");
             
-            // Fake interpretation update
-            document.getElementById("interpretation-text").innerHTML = `
-                Your Gauteng duplex soil (clay loam over sandy clay) shows <strong>${currentData.limiting}</strong> as the primary limiting nutrient per Liebig’s Law. 
-                pH ${currentData.ph} is below optimum. QUEFTS balance is strong at ${currentData.quefits}%. 
-                Pedotransfer water retention: 26%.
+            content.innerHTML = `
+                <img src="${scientist.avatar}" class="w-28 h-28 mx-auto rounded-3xl object-cover ring-4 ring-emerald-100">
+                <div class="mt-6 font-semibold text-2xl">${scientist.name}</div>
+                <div class="text-emerald-600">${scientist.title}</div>
+                <div class="text-xs mt-1 text-slate-400">${scientist.location}</div>
+                
+                <div class="my-8 bg-emerald-50 rounded-3xl p-6 text-left text-sm">
+                    ${scientist.bio}
+                </div>
+                
+                <button onclick="contactScientist()" 
+                        class="w-full py-4 bg-emerald-700 hover:bg-emerald-800 text-white font-semibold rounded-3xl">
+                    Message on WhatsApp
+                </button>
             `;
+            modal.classList.remove("hidden");
+            modal.classList.add("flex");
         }
 
-        function createTrendChart() {
-            const ctx = document.getElementById("trend-chart");
-            if (trendChart) trendChart.destroy();
-            
-            trendChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ["Nov 5", "Dec 10", "Jan 20", "Feb 15"],
-                    datasets: [{
-                        label: 'pH',
-                        data: [6.1, 5.8, 5.5, 5.3],
-                        borderColor: '#10b981',
-                        tension: 0.4,
-                        borderWidth: 3,
-                        pointBackgroundColor: '#fff',
-                        pointBorderWidth: 3
-                    }]
-                },
-                options: {
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: { grid: { color: '#f1f5f9' }, min: 4.5, max: 7.5 },
-                        x: { grid: { color: '#f1f5f9' } }
-                    },
-                    elements: { point: { radius: 5 } }
-                }
-            });
-        }
-
-        function updateChart() {
-            if (!trendChart) return;
-            const type = document.getElementById("chart-select").value;
-            
-            if (type === "ph") {
-                trendChart.data.datasets[0].data = [6.1, 5.8, 5.5, 5.3];
-                trendChart.data.datasets[0].label = "pH";
-                trendChart.data.datasets[0].borderColor = "#10b981";
-            } else if (type === "npk") {
-                trendChart.data.datasets[0].data = [72, 68, 55, 42];
-                trendChart.data.datasets[0].label = "N (kg/ha)";
-                trendChart.data.datasets[0].borderColor = "#eab308";
-            } else {
-                trendChart.data.datasets[0].data = [22, 18, 15, 19];
-                trendChart.data.datasets[0].label = "Moisture %";
-                trendChart.data.datasets[0].borderColor = "#0ea5e9";
-            }
-            trendChart.update();
-        }
-
-        // Modal controls
-        function showUploadModal() {
-            document.getElementById("upload-modal").classList.remove("hidden");
-            document.getElementById("upload-modal").classList.add("flex");
-            switchUploadTab(0);
-        }
-
-        function closeUploadModal() {
-            const modal = document.getElementById("upload-modal");
+        function closeScientistModal() {
+            const modal = document.getElementById("scientist-modal");
             modal.classList.add("hidden");
             modal.classList.remove("flex");
         }
 
-        function switchUploadTab(n) {
-            for (let i = 0; i < 3; i++) {
-                const tab = document.getElementById("tab-" + i);
-                const content = document.getElementById("upload-content-" + i);
-                if (i === n) {
-                    tab.classList.add("border-b-2", "border-emerald-600", "text-emerald-700");
-                    tab.classList.remove("text-slate-400");
-                    content.classList.remove("hidden");
-                } else {
-                    tab.classList.remove("border-b-2", "border-emerald-600", "text-emerald-700");
-                    tab.classList.add("text-slate-400");
-                    content.classList.add("hidden");
-                }
-            }
+        function contactScientist() {
+            closeScientistModal();
+            showToast("WhatsApp link opened (demo)");
         }
 
-        let uploadedPhotoURL = "";
+        function showShareModal() {
+            document.getElementById("share-modal").classList.remove("hidden");
+            document.getElementById("share-modal").classList.add("flex");
+        }
 
-        function handlePhotoUpload(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(ev) {
-                uploadedPhotoURL = ev.target.result;
-                document.getElementById("photo-preview").src = uploadedPhotoURL;
-                document.getElementById("photo-preview-container").classList.remove("hidden");
-                document.getElementById("photo-dropzone").classList.add("hidden");
+        function closeShareModal() {
+            document.getElementById("share-modal").classList.add("hidden");
+            document.getElementById("share-modal").classList.remove("flex");
+        }
+
+        function submitAnonymisedData() {
+            closeShareModal();
+            const newInsight = {
+                id: Date.now(),
+                title: "New collective contribution",
+                text: document.getElementById("share-text").value || "Anonymous farmer shared valuable soil trend data.",
+                province: document.getElementById("share-province").value,
+                time: "just now",
+                trend: "📊",
+                emoji: "🌍"
             };
-            reader.readAsDataURL(file);
+            insightsData.unshift(newInsight);
+            renderInsights();
+            showToast("Thank you! Your anonymised data is now live in the network");
         }
 
-        function analyzePhoto() {
-            closeUploadModal();
-            showLoadingModal();
-            setTimeout(() => {
-                currentData.photo = uploadedPhotoURL || "https://picsum.photos/id/201/600/600";
-                currentData.ph = 5.3;
-                currentData.n = 39;
-                currentData.health = 79;
-                currentData.limiting = "Nitrogen";
-                updateAllUI();
-                hideLoadingModal();
-                showToast("Photo analyzed • Texture detected: clay loam");
-            }, 1650);
+        function refreshInsights() {
+            showToast("Feed refreshed • 1 new insight from Limpopo");
+            // Simulate new insight
+            insightsData.unshift({
+                id: Date.now(),
+                title: "Limpopo • Sekhukhune",
+                text: "Smallholders report +11% moisture retention after mulching trials",
+                province: "Limpopo",
+                time: "just now",
+                trend: "+11%",
+                emoji: "💧"
+            });
+            renderInsights();
         }
 
-        function fakeLabUpload() {
-            closeUploadModal();
-            showLoadingModal();
-            setTimeout(() => {
-                currentData.ph = 5.3;
-                currentData.n = 42;
-                currentData.p = 28;
-                currentData.k = 165;
-                currentData.health = 82;
-                currentData.limiting = "Nitrogen";
-                updateAllUI();
-                hideLoadingModal();
-                showToast("Lab report imported • Liebig’s applied");
-            }, 1200);
+        function showAllGroups() {
+            showToast("Full group directory coming soon");
         }
 
-        function fakeIoTUpload() {
-            closeUploadModal();
-            showLoadingModal();
-            setTimeout(() => {
-                currentData.moisture = 21;
-                currentData.temp = 24.1;
-                updateAllUI();
-                hideLoadingModal();
-                showToast("IoT data synced from 4 probes");
-            }, 900);
-        }
-
-        function triggerPhotoUpload() {
-            showUploadModal();
-        }
-
-        function showLoadingModal() {
-            const modal = document.getElementById("loading-modal");
-            modal.classList.remove("hidden");
-            modal.classList.add("flex");
-            // Animate loading bar
-            setTimeout(() => {
-                document.getElementById("loading-bar").style.width = "100%";
-            }, 100);
-        }
-
-        function hideLoadingModal() {
-            const modal = document.getElementById("loading-modal");
-            modal.classList.add("hidden");
-            modal.classList.remove("flex");
-            document.getElementById("loading-bar").style.width = "0%";
-        }
-
-        function runFullAnalysis() {
-            showLoadingModal();
-            setTimeout(() => {
-                // Random small improvement
-                currentData.health = Math.min(99, currentData.health + 3);
-                currentData.ph = parseFloat((currentData.ph + 0.1).toFixed(1));
-                currentData.n += 4;
-                updateAllUI();
-                hideLoadingModal();
-                showToast("Full scientific analysis complete");
-            }, 1850);
-        }
-
-        function showDetailModal(type) {
-            const modal = document.getElementById("detail-modal");
-            document.getElementById("modal-title").textContent = type + " Details";
-            
-            let html = "";
-            if (type === "pH") {
-                html = `<p class="text-lg">Current pH <span class="font-semibold">${currentData.ph}</span> is slightly acidic for maize in Gauteng duplex soils.</p>
-                        <p class="mt-6">Recommended lime application: <span class="font-bold text-emerald-700">2.5 t/ha</span> to reach target 6.2.</p>`;
-            } else {
-                html = `<p>Detailed breakdown available in full report.</p>`;
-            }
-            document.getElementById("modal-content").innerHTML = html;
-            modal.classList.remove("hidden");
-            modal.classList.add("flex");
-        }
-
-        function closeDetailModal() {
-            const modal = document.getElementById("detail-modal");
-            modal.classList.add("hidden");
-            modal.classList.remove("flex");
+        function joinFeaturedGroup() {
+            const gauteng = regionalGroups[0];
+            gauteng.joined = true;
+            renderRegionalGroups();
+            renderMyGroups();
+            showToast("Welcome to Gauteng Farmers Network! 🎉");
         }
 
         function showToast(message) {
             const toast = document.getElementById("toast");
-            document.getElementById("toast-text").textContent = message;
+            document.getElementById("toast-text").innerHTML = message;
             toast.classList.remove("hidden");
-            toast.style.transform = "translateY(0)";
             setTimeout(() => {
-                toast.style.transform = "translateY(80px)";
-                setTimeout(() => toast.classList.add("hidden"), 400);
-            }, 3200);
+                toast.classList.add("translate-y-12", "opacity-0");
+                setTimeout(() => {
+                    toast.classList.add("hidden");
+                    toast.classList.remove("translate-y-12", "opacity-0");
+                }, 400);
+            }, 3000);
         }
 
-        function simulateIoT() {
-            currentData.moisture = Math.floor(Math.random() * 8) + 17;
-            currentData.temp = (22 + Math.random() * 4).toFixed(1);
-            updateAllUI();
-            showToast("Live IoT reading received");
-        }
-
-        function dismissAlert() {
-            document.getElementById("alert-banner").style.display = "none";
-            showToast("Lime recommendation added to shopping list");
-        }
-
-        function exportReport() {
-            showToast("Report exported as CSV (demo)");
-        }
-
-        function selectField() {
-            showToast("Field Alpha selected");
-        }
-
-        function showNotifications() {
-            showToast("No new notifications • All good");
-        }
-
-        function switchTab(n) {
-            document.querySelectorAll(".nav-link").forEach((el, i) => {
-                if (i === n) el.classList.add("text-emerald-700", "font-semibold");
-                else el.classList.remove("text-emerald-700", "font-semibold");
-            });
-            if (n === 1) showUploadModal();
-            if (n === 2) {
-                window.scrollTo({ top: document.querySelector(".bg-white.rounded-3xl.overflow-hidden").offsetTop - 100, behavior: "smooth" });
-            }
-        }
-
-        // Initialize everything
+        // Initialize
         window.onload = function() {
-            initTailwind();
-            renderHistory();
-            updateAllUI();
-            createTrendChart();
+            renderMyGroups();
+            renderRegionalGroups();
+            renderInsights();
+            renderScientists();
             
-            // Keyboard escape support
-            document.addEventListener("keydown", function(e) {
-                if (e.key === "Escape") {
-                    const modals = document.querySelectorAll("#upload-modal, #loading-modal, #detail-modal");
-                    for (let m of modals) {
-                        if (!m.classList.contains("hidden")) {
-                            m.classList.add("hidden");
-                            m.classList.remove("flex");
-                        }
-                    }
-                }
-            });
-            
-            // Demo: auto show toast after 2.8s
+            // Welcome toast
             setTimeout(() => {
-                showToast("Welcome back to TerraSoil AI, Kgaogelo 👋");
-            }, 2800);
+                showToast("Welcome back to the Africa-First Network, Kgaogelo 🌍");
+            }, 1400);
             
-            // Make nav links nice
-            console.log("%cTerraSoil AI Dashboard ready for Gauteng farmers 🌱", "color:#10b981; font-family:monospace");
+            console.log("%cTerraSoil Community ready • Built for African farmers", "color:#10b981; font-family:monospace");
         };
     </script>
 </body>
