@@ -3,282 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TerraScout | Global & Local Soil Explorer</title>
-    
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-    
+    <title>TerraAnalysis | Soil Intelligence Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        /* Modern CSS Reset and Variables */
-        :root {
-            --primary: #2ecc71;
-            --secondary: #27ae60;
-            --dark: #2c3e50;
-            --light: #ecf0f1;
-            --text: #333;
-            --panel-bg: rgba(255, 255, 255, 0.95);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-        }
-
-        body {
-            color: var(--text);
-            overflow: hidden; /* Keep it app-like */
-        }
-
-        /* Navbar */
-        nav {
-            background: var(--dark);
-            color: white;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            position: relative;
-            z-index: 1000;
-        }
-
-        nav h1 {
-            font-weight: 800;
-            letter-spacing: 1px;
-            color: var(--primary);
-        }
-
-        /* Main App Container */
-        .app-container {
-            display: flex;
-            height: calc(100vh - 60px);
-            position: relative;
-        }
-
-        /* The Interactive Map */
-        #map {
-            flex-grow: 1;
-            height: 100%;
-            z-index: 1;
-        }
-
-        /* UI Overlays & Instructions */
-        .map-overlay {
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--dark);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 30px;
-            font-weight: 600;
-            z-index: 500;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            animation: pulse 2s infinite;
-            cursor: pointer;
-        }
-
-        /* Instant Report Sidebar (Animated) */
-        .report-panel {
-            position: absolute;
-            top: 0;
-            right: -400px; /* Hidden by default */
-            width: 380px;
-            height: 100%;
-            background: var(--panel-bg);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            box-shadow: -5px 0 25px rgba(0,0,0,0.1);
-            transition: right 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-            padding: 2rem;
-            overflow-y: auto;
-        }
-
-        .report-panel.active {
-            right: 0;
-        }
-
-        .close-btn {
-            float: right;
-            cursor: pointer;
-            font-size: 1.5rem;
-            color: #999;
-            border: none;
-            background: none;
-            transition: color 0.3s ease;
-        }
-
-        .close-btn:hover { color: var(--dark); }
-
-        .report-header {
-            margin-bottom: 1.5rem;
-            border-bottom: 2px solid var(--primary);
-            padding-bottom: 0.5rem;
-        }
-
-        .data-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
-
-        .data-card {
-            background: white;
-            padding: 1rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            text-align: center;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.4s ease;
-        }
-
-        /* Animation classes triggered via JS */
-        .data-card.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .data-card h3 {
-            font-size: 0.85rem;
-            color: #666;
-            margin-bottom: 0.5rem;
-        }
-
-        .data-card .value {
-            font-size: 1.2rem;
-            font-weight: 800;
-            color: var(--primary);
-        }
-
-        /* CSS Animations */
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.7); }
-            70% { box-shadow: 0 0 0 15px rgba(46, 204, 113, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0); }
-        }
-
+        .sidebar-item:hover { background-color: #2d3748; }
+        .stat-card { transition: transform 0.2s; }
+        .stat-card:hover { transform: translateY(-5px); }
     </style>
 </head>
-<body>
+<body class="bg-slate-50 font-sans text-slate-900">
 
-    <nav>
-        <h1>🌱 TerraScout</h1>
-        <div>
-            <span style="margin-right: 15px;">Global & Local Soil Explorer</span>
-            <button style="padding: 5px 15px; border-radius: 20px; border: none; background: var(--primary); color: white; cursor: pointer; font-weight: bold;">API Docs</button>
-        </div>
-    </nav>
-
-    <div class="app-container">
-        <div id="map"></div>
-        <div class="map-overlay">Click anywhere on the map to generate an instant soil report</div>
-
-        <div class="report-panel" id="reportPanel">
-            <button class="close-btn" onclick="closeReport()">&times;</button>
-            <div class="report-header">
-                <h2>Instant Soil Report</h2>
-                <p id="coord-display" style="font-size: 0.8rem; color: #666; margin-top: 5px;">Coords: --</p>
+    <div class="flex min-h-screen">
+        <aside class="w-64 bg-slate-900 text-white flex flex-col">
+            <div class="p-6 text-2xl font-bold border-b border-slate-700 flex items-center gap-2">
+                <i data-lucide="sprout" class="text-green-400"></i> TerraAnalysis
             </div>
+            <nav class="flex-1 p-4 space-y-2">
+                <a href="#" class="sidebar-item flex items-center gap-3 p-3 rounded-lg bg-green-600">
+                    <i data-lucide="layout-dashboard"></i> Dashboard
+                </a>
+                <a href="#" class="sidebar-item flex items-center gap-3 p-3 rounded-lg">
+                    <i data-lucide="microscope"></i> The Science Lab
+                </a>
+                <a href="#" class="sidebar-item flex items-center gap-3 p-3 rounded-lg">
+                    <i data-lucide="history"></i> Field History
+                </a>
+                <a href="#" class="sidebar-item flex items-center gap-3 p-3 rounded-lg">
+                    <i data-lucide="upload-cloud"></i> Upload Data
+                </a>
+            </nav>
+            <div class="p-4 border-t border-slate-700 text-xs text-slate-400">
+                System Status: <span class="text-green-400">Online</span>
+            </div>
+        </aside>
 
-            <div class="data-grid" id="dataGrid">
+        <main class="flex-1 overflow-y-auto">
+            <header class="bg-white border-b p-6 flex justify-between items-center">
+                <h1 class="text-xl font-semibold">North Field - Sector A1</h1>
+                <div class="flex items-center gap-4">
+                    <span class="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1">
+                        <i data-lucide="alert-triangle" size="16"></i> Critical N-P-K Alert
+                    </span>
+                    <button class="bg-slate-100 p-2 rounded-full"><i data-lucide="bell"></i></button>
+                    <div class="w-10 h-10 rounded-full bg-slate-300"></div>
                 </div>
-            
-            <button style="width: 100%; margin-top: 20px; padding: 10px; background: var(--dark); color: white; border: none; border-radius: 5px; cursor: pointer;">Download Full PDF</button>
-        </div>
+            </header>
+
+            <div class="p-8 space-y-8">
+                <section class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div class="stat-card bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <p class="text-sm text-slate-500 font-medium uppercase">Moisture</p>
+                        <h3 class="text-3xl font-bold">24.2%</h3>
+                        <p class="text-xs text-green-500 mt-2">Optimal range</p>
+                    </div>
+                    <div class="stat-card bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <p class="text-sm text-slate-500 font-medium uppercase">Temperature</p>
+                        <h3 class="text-3xl font-bold">18°C</h3>
+                        <p class="text-xs text-slate-400 mt-2">Probe #004</p>
+                    </div>
+                    <div class="stat-card bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <p class="text-sm text-slate-500 font-medium uppercase">Organic Matter</p>
+                        <h3 class="text-3xl font-bold">3.8%</h3>
+                        <p class="text-xs text-blue-500 mt-2">+0.2% from last year</p>
+                    </div>
+                    <div class="stat-card bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <p class="text-sm text-slate-500 font-medium uppercase">pH Level</p>
+                        <h3 class="text-3xl font-bold">6.2</h3>
+                        <p class="text-xs text-amber-500 mt-2">Slightly Acidic</p>
+                    </div>
+                </section>
+
+                <section class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <h2 class="text-lg font-bold mb-4 flex items-center gap-2">
+                            <i data-lucide="layers" class="text-amber-600"></i> Liebig’s Law of the Minimum
+                        </h2>
+                        <div class="flex items-end justify-between h-48 gap-2 bg-slate-50 p-4 rounded-lg">
+                            <div class="w-12 bg-green-500 h-[90%] rounded-t relative"><span class="absolute -top-6 left-0 text-xs">N</span></div>
+                            <div class="w-12 bg-amber-500 h-[40%] rounded-t relative"><span class="absolute -top-6 left-0 text-xs">P</span></div>
+                            <div class="w-12 bg-green-500 h-[85%] rounded-t relative"><span class="absolute -top-6 left-0 text-xs">K</span></div>
+                            <div class="w-12 bg-green-400 h-[70%] rounded-t relative"><span class="absolute -top-6 left-0 text-xs">Mg</span></div>
+                            <div class="w-12 bg-blue-500 h-[60%] rounded-t relative"><span class="absolute -top-6 left-0 text-xs">H2O</span></div>
+                        </div>
+                        
+                        <p class="mt-4 text-sm text-slate-600 italic">
+                            Your yield is currently limited by <strong>Phosphorus (P)</strong>. 
+                            Further N-application will result in runoff without P-correction.
+                        </p>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <h2 class="text-lg font-bold mb-4 flex items-center gap-2">
+                            <i data-lucide="activity" class="text-blue-600"></i> QUEFTS Nutrient Balance
+                        </h2>
+                        <div class="border-l-2 border-b-2 border-slate-300 h-48 relative overflow-hidden bg-slate-50">
+                            <svg class="absolute inset-0 w-full h-full">
+                                <path d="M 0 180 Q 150 50 400 30" stroke="#2563eb" fill="transparent" stroke-width="3"/>
+                                <circle cx="200" cy="80" r="5" fill="#ef4444" />
+                            </svg>
+                        </div>
+                        
+                        <div class="mt-4 space-y-2">
+                            <div class="flex justify-between text-sm"><span>Internal Efficiency:</span> <span class="font-bold">High</span></div>
+                            <div class="flex justify-between text-sm"><span>Estimated Yield Potential:</span> <span class="font-bold">8.4 Tons/Ha</span></div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="bg-white p-8 rounded-xl shadow-sm border border-dashed border-slate-300">
+                    <div class="text-center max-w-md mx-auto">
+                        <i data-lucide="cloud-upload" class="mx-auto h-12 w-12 text-slate-400 mb-4"></i>
+                        <h2 class="text-xl font-bold">Upload Lab Results & Photos</h2>
+                        <p class="text-slate-500 text-sm mt-2 mb-6">Drop your CSV, PDF, or field photos. We'll extract the chemical properties automatically.</p>
+                        <div class="flex gap-4 justify-center">
+                            <button class="bg-slate-900 text-white px-6 py-2 rounded-lg font-medium">Browse Files</button>
+                            <button class="border border-slate-300 px-6 py-2 rounded-lg font-medium">Link IoT Probe</button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
     </div>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // 1. Initialize the Map (Centered roughly on South Africa as requested)
-        const map = L.map('map').setView([-28.4793, 24.6727], 6);
-
-        // 2. Base Layers (Simulating standard and satellite views)
-        const streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors'
-        });
-
-        const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-            attribution: 'Tiles © Esri'
-        });
-
-        streetLayer.addTo(map);
-
-        // Simulated Weather/Rainfall Overlay (just a tinted placeholder layer for demo)
-        const rainfallOverlay = L.tileLayer('https://{s}.tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=YOUR_API_KEY', {
-            opacity: 0.5
-        });
-
-        // Layer Controls
-        const baseMaps = {
-            "Standard Map": streetLayer,
-            "Satellite Imagery": satelliteLayer
-        };
-        const overlayMaps = {
-            "Rainfall Patterns (Mock)": rainfallOverlay
-        };
-        L.control.layers(baseMaps, overlayMaps).addTo(map);
-
-        let currentMarker = null;
-
-        // 3. Map Click Event -> Generate Report
-        map.on('click', function(e) {
-            const lat = e.latlng.lat.toFixed(4);
-            const lng = e.latlng.lng.toFixed(4);
-
-            // Add a marker with a pop animation
-            if(currentMarker) map.removeLayer(currentMarker);
-            currentMarker = L.marker([lat, lng]).addTo(map);
-
-            // Update UI
-            document.getElementById('coord-display').innerText = `Lat: ${lat}, Lng: ${lng}`;
-            openReport();
-            generateMockData();
-        });
-
-        // UI Functions
-        const panel = document.getElementById('reportPanel');
-        function openReport() {
-            panel.classList.add('active');
-        }
-        function closeReport() {
-            panel.classList.remove('active');
-        }
-
-        // Simulate fetching data from your PostGIS/SoilGrids API
-        function generateMockData() {
-            const grid = document.getElementById('dataGrid');
-            grid.innerHTML = ''; // Clear previous
-
-            // Simulated Soil Data
-            const soilData = [
-                { label: 'Soil Texture', value: 'Sandy Loam' },
-                { label: 'pH Level', value: (Math.random() * (8.0 - 5.5) + 5.5).toFixed(1) },
-                { label: 'Organic Matter', value: (Math.random() * 5 + 1).toFixed(1) + '%' },
-                { label: 'Nitrogen (N)', value: Math.floor(Math.random() * 50 + 10) + ' mg/kg' },
-                { label: 'Water Holding', value: 'Medium' },
-                { label: 'Erosion Risk', value: Math.random() > 0.5 ? 'Low' : 'Moderate' }
-            ];
-
-            // Render cards with staggered fade-in animation
-            soilData.forEach((item, index) => {
-                const card = document.createElement('div');
-                card.className = 'data-card';
-                card.innerHTML = `
-                    <h3>${item.label}</h3>
-                    <div class="value">${item.value}</div>
-                `;
-                grid.appendChild(card);
-
-                // Staggered animation trigger
-                setTimeout(() => {
-                    card.classList.add('show');
-                }, 100 * index);
-            });
-        }
+        // Initialize Icons
+        lucide.createIcons();
     </script>
 </body>
 </html>
