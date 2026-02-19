@@ -5,17 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AgriCore | The Big Three (Full Functionality)</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Modern Addition 1: PWA Manifest (self-contained data URI) -->
+    <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22AgriCore%20Precision%20Ag%22%2C%22short_name%22%3A%22AgriCore%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22theme_color%22%3A%22%232ECC71%22%2C%22background_color%22%3A%22%23F8F9FA%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22https%3A%2F%2Fpicsum.photos%2F192%2F192%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fpng%22%7D%2C%7B%22src%22%3A%22https%3A%2F%2Fpicsum.photos%2F512%2F512%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fpng%22%7D%5D%7D">
+    
     <style>
         :root {
-            --soil-color: #8D6E63; 
-            --plant-color: #2ECC71; 
-            --water-color: #3498DB; 
-            --dark: #1A1A1A; 
+            --soil-color: #8D6E63;
+            --plant-color: #2ECC71;
+            --water-color: #3498DB;
+            --dark: #1A1A1A;
             --light: #F8F9FA;
             --text-gray: #4A4A4A;
             --footer-bg: #111111;
         }
-
         * {
             margin: 0;
             padding: 0;
@@ -23,13 +26,11 @@
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             scroll-behavior: smooth;
         }
-
         body {
             background-color: var(--light);
             color: var(--dark);
             line-height: 1.6;
         }
-
         nav {
             background-color: var(--dark);
             color: var(--light);
@@ -41,23 +42,19 @@
             top: 0;
             z-index: 1000;
         }
-
         nav h1 span { color: var(--plant-color); }
-
         .nav-links a {
             color: var(--light);
             text-decoration: none;
             margin-left: 1.5rem;
             font-weight: 500;
         }
-
         header {
             background: linear-gradient(rgba(26, 26, 26, 0.85), rgba(26, 26, 26, 0.85)), url('https://images.unsplash.com/photo-1586771107445-d3af2e88258e?auto=format&fit=crop&w=1920&q=80') center/cover;
             color: var(--light);
             padding: 10rem 5%;
             text-align: center;
         }
-
         .cta-btn {
             background-color: var(--plant-color);
             color: var(--dark);
@@ -69,19 +66,15 @@
             border: none;
             transition: 0.3s;
         }
-
         section { padding: 6rem 5%; }
-
         .grid-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 4rem;
             align-items: center;
         }
-
         .reverse-grid { direction: rtl; }
         .reverse-grid > * { direction: ltr; }
-
         .module-badge {
             font-size: 1.2rem;
             padding: 0.3rem 1rem;
@@ -89,7 +82,6 @@
             color: white;
             font-weight: bold;
         }
-
         .feature-box {
             background: white;
             padding: 1.5rem;
@@ -97,7 +89,6 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             margin-bottom: 1rem;
         }
-
         .visual-container {
             background: white;
             padding: 2rem;
@@ -109,7 +100,6 @@
             justify-content: center;
             align-items: center;
         }
-
         #upload-zone {
             border: 2px dashed var(--plant-color);
             width: 100%;
@@ -122,18 +112,14 @@
             border-radius: 10px;
             transition: 0.3s;
         }
-
         #upload-zone:hover { background: #f0fff4; }
-
         .switch {
             position: relative;
             display: inline-block;
             width: 60px;
             height: 34px;
         }
-
         .switch input { opacity: 0; width: 0; height: 0; }
-
         .slider {
             position: absolute;
             cursor: pointer;
@@ -142,9 +128,7 @@
             transition: .4s;
             border-radius: 34px;
         }
-
         input:checked + .slider { background-color: var(--water-color); }
-
         /* PROFESSIONAL FOOTER STYLES */
         footer {
             background-color: var(--footer-bg);
@@ -152,7 +136,6 @@
             padding: 4rem 5% 2rem 5%;
             font-size: 0.9rem;
         }
-
         .footer-grid {
             display: grid;
             grid-template-columns: 2fr 1fr 1fr 2fr;
@@ -160,14 +143,11 @@
             border-bottom: 1px solid #333;
             padding-bottom: 3rem;
         }
-
         .footer-brand h2 {
             color: white;
             margin-bottom: 1rem;
         }
-
         .footer-brand h2 span { color: var(--plant-color); }
-
         .footer-column h4 {
             color: white;
             margin-bottom: 1.2rem;
@@ -175,30 +155,24 @@
             letter-spacing: 1px;
             font-size: 0.8rem;
         }
-
         .footer-column ul {
             list-style: none;
         }
-
         .footer-column ul li {
             margin-bottom: 0.8rem;
         }
-
         .footer-column ul li a {
             color: #aaa;
             text-decoration: none;
             transition: 0.3s;
         }
-
         .footer-column ul li a:hover {
             color: var(--plant-color);
         }
-
         .newsletter-form {
             display: flex;
             margin-top: 1rem;
         }
-
         .newsletter-form input {
             background: #222;
             border: 1px solid #444;
@@ -207,7 +181,6 @@
             border-radius: 5px 0 0 5px;
             flex: 1;
         }
-
         .newsletter-form button {
             background: var(--plant-color);
             border: none;
@@ -216,7 +189,6 @@
             cursor: pointer;
             font-weight: bold;
         }
-
         .footer-bottom {
             padding-top: 2rem;
             display: flex;
@@ -224,19 +196,47 @@
             align-items: center;
             color: #666;
         }
-
         @media (max-width: 968px) {
             .footer-grid { grid-template-columns: 1fr 1fr; }
         }
-
         @media (max-width: 600px) {
             .footer-grid { grid-template-columns: 1fr; }
             .footer-bottom { flex-direction: column; gap: 1rem; text-align: center; }
         }
+
+        /* New styles for modern additions (only added) */
+        #chat-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--plant-color);
+            color: #1A1A1A;
+            border: none;
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            font-size: 28px;
+            box-shadow: 0 10px 30px rgba(46, 204, 113, 0.4);
+            z-index: 9999;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        #chat-btn:hover { transform: scale(1.1); }
+        #chat-modal {
+            display: none;
+            position: fixed;
+            bottom: 110px;
+            right: 30px;
+            width: 360px;
+            background: white;
+            border-radius: 18px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+            z-index: 10000;
+            overflow: hidden;
+        }
     </style>
 </head>
 <body>
-
     <nav>
         <h1>Agri<span>Core</span></h1>
         <div class="nav-links">
@@ -245,13 +245,11 @@
             <a href="#layer-c">Water</a>
         </div>
     </nav>
-
     <header>
         <h2>The Core of Precision Ag.</h2>
         <p>A integrating Soil Intelligence, Plant Agronomy, and Water Management.</p>
         <button class="cta-btn" onclick="location.href='#layer-a'">Initialize Dashboard</button>
     </header>
-
     <section id="layer-a">
         <div class="grid-container">
             <div>
@@ -270,11 +268,10 @@
             </div>
             <div class="visual-container">
                 <h4 style="margin-bottom: 1rem;">Live GIS Nutrient Profile</h4>
-                <canvas id="soilChart"></canvas>
+                <canvas id="soilChart" aria-label="Live GIS Nutrient Profile radar chart showing Nitrogen, Phosphorus, Potassium, Magnesium, Sulfur"></canvas>
             </div>
         </div>
     </section>
-
     <section id="layer-b" style="background-color: white;">
         <div class="grid-container reverse-grid">
             <div>
@@ -284,7 +281,7 @@
                 </h3>
                 <div class="feature-box" style="border-left: 5px solid var(--plant-color);">
                     <h4>GenAI Virtual Agronomist</h4>
-                    <div id="upload-zone" onclick="document.getElementById('leaf-upload').click()">
+                    <div id="upload-zone" role="button" tabindex="0" aria-label="Upload leaf photo for AI analysis" onclick="document.getElementById('leaf-upload').click()">
                         <p id="upload-text">Drag & Drop Leaf Photo Here</p>
                         <input type="file" id="leaf-upload" style="display:none" onchange="handleAIAnalysis()">
                     </div>
@@ -296,11 +293,10 @@
             </div>
             <div class="visual-container">
                 <h4 style="margin-bottom: 1rem;">Satellite Spectral Index (NDVI)</h4>
-                <canvas id="ndviChart"></canvas>
+                <canvas id="ndviChart" aria-label="Satellite Spectral Index (NDVI) line chart"></canvas>
             </div>
         </div>
     </section>
-
     <section id="layer-c">
         <div class="grid-container">
             <div>
@@ -326,7 +322,27 @@
             </div>
             <div class="visual-container">
                 <h4 style="margin-bottom: 1rem;">Soil Moisture vs. Evapotranspiration</h4>
-                <canvas id="waterChart"></canvas>
+                <canvas id="waterChart" aria-label="Soil Moisture vs. Evapotranspiration bar chart"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modern Addition 5: Sustainability Metrics Dashboard (Layer D) -->
+    <section id="layer-d" style="background-color: #f8fff9;">
+        <div class="grid-container">
+            <div>
+                <h3 style="color: #27AE60;">
+                    <span class="module-badge" style="background-color: #27AE60;">Layer D</span>
+                    Sustainability Intelligence
+                </h3>
+                <div class="feature-box" style="border-left: 5px solid #27AE60;">
+                    <h4>Carbon Footprint Tracker</h4>
+                    <p>Estimated Carbon Sequestration: <b>15.2 tCO₂/ha</b> (+12% YoY)</p>
+                </div>
+            </div>
+            <div class="visual-container">
+                <h4 style="margin-bottom: 1rem;">Farm Carbon Balance</h4>
+                <canvas id="carbonChart"></canvas>
             </div>
         </div>
     </section>
@@ -374,7 +390,27 @@
         </div>
     </footer>
 
+    <!-- Modern Addition 4: AI-Powered Chatbot (floating button + modal) -->
+    <button id="chat-btn" onclick="toggleChat()">🌱</button>
+
+    <div id="chat-modal">
+        <div style="background: var(--plant-color); color: #1A1A1A; padding: 16px 20px; font-weight: 600; display: flex; justify-content: space-between; align-items: center;">
+            <span>🌱 AgriCore AI Assistant</span>
+            <span onclick="toggleChat()" style="cursor:pointer; font-size: 22px;">×</span>
+        </div>
+        <div id="chat-body" style="height: 340px; padding: 20px; overflow-y: auto; background: #fafafa;">
+            <p><strong>Welcome!</strong> Ask me anything about your farm — soil pH, pest alerts, irrigation schedules, or carbon goals.</p>
+        </div>
+        <div style="padding: 12px; border-top: 1px solid #eee; display: flex;">
+            <input type="text" id="chat-input" placeholder="Type your question..." 
+                   style="flex:1; padding:12px; border:1px solid #ddd; border-radius:8px 0 0 8px;" 
+                   onkeypress="if(event.key==='Enter') sendChatMessage()">
+            <button onclick="sendChatMessage()" style="background:var(--plant-color); color:#1A1A1A; border:none; padding:0 18px; border-radius:0 8px 8px 0; font-weight:bold;">Send</button>
+        </div>
+    </div>
+
     <script>
+        // === ORIGINAL JAVASCRIPT (100% unchanged) ===
         const ctxSoil = document.getElementById('soilChart').getContext('2d');
         new Chart(ctxSoil, {
             type: 'radar',
@@ -388,7 +424,6 @@
                 }]
             }
         });
-
         const ctxNDVI = document.getElementById('ndviChart').getContext('2d');
         new Chart(ctxNDVI, {
             type: 'line',
@@ -403,7 +438,6 @@
                 }]
             }
         });
-
         const ctxWater = document.getElementById('waterChart').getContext('2d');
         new Chart(ctxWater, {
             type: 'bar',
@@ -416,7 +450,6 @@
                 }]
             }
         });
-
         function handleAIAnalysis() {
             const text = document.getElementById('upload-text');
             text.innerHTML = "<b>Analyzing Image...</b>";
@@ -425,16 +458,104 @@
                 text.style.color = "var(--plant-color)";
             }, 2000);
         }
-
         function exportVRT() {
             alert("Generating VRT prescription files. Download starting...");
         }
-
         function togglePump() {
             const status = document.getElementById('pump-status');
             const isChecked = document.getElementById('pumpSwitch').checked;
             status.innerText = isChecked ? "Status: AI Optimized (Pumping Active)" : "Status: Offline";
             status.style.color = isChecked ? "var(--water-color)" : "var(--text-gray)";
+        }
+
+        // === NEW MODERN ADDITIONS ===
+
+        // Modern Addition 2: Accessibility keyboard support for upload zone
+        document.getElementById('upload-zone').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                document.getElementById('leaf-upload').click();
+            }
+        });
+
+        // Modern Addition 3: Web Vitals / Lazy Loading with Intersection Observer
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                }
+            });
+        }, { threshold: 0.3 });
+
+        document.querySelectorAll('canvas').forEach(canvas => {
+            canvas.style.opacity = '0.3';
+            observer.observe(canvas);
+        });
+
+        // Modern Addition 5: Sustainability Carbon Chart
+        const ctxCarbon = document.getElementById('carbonChart').getContext('2d');
+        new Chart(ctxCarbon, {
+            type: 'doughnut',
+            data: {
+                labels: ['Sequestered', 'Emitted'],
+                datasets: [{
+                    data: [68, 32],
+                    backgroundColor: ['#27AE60', '#E74C3C'],
+                    borderColor: '#fff',
+                    borderWidth: 4
+                }]
+            },
+            options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+        });
+
+        // Modern Addition 4: AI Chatbot
+        function toggleChat() {
+            const modal = document.getElementById('chat-modal');
+            modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
+        }
+        function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const body = document.getElementById('chat-body');
+            if (!input.value.trim()) return;
+            
+            body.innerHTML += `<p style="text-align:right;color:var(--plant-color);margin:8px 0;"><strong>You:</strong> ${input.value}</p>`;
+            
+            const question = input.value.toLowerCase();
+            setTimeout(() => {
+                let reply = "Great question! ";
+                if (question.includes('ph') || question.includes('soil')) reply += "Your average soil pH is 6.4 — perfect range for maize.";
+                else if (question.includes('pest') || question.includes('disease')) reply += "NDVI shows early stress in Sector B2. Recommend scouting for aphids.";
+                else if (question.includes('irrigation') || question.includes('water')) reply += "AI suggests 38 minutes tonight at 60% capacity.";
+                else reply += "Based on your latest data, I recommend adjusting nitrogen by +8 kg/ha this week.";
+                body.innerHTML += `<p style="margin:8px 0;"><strong>AgriCore AI:</strong> ${reply}</p>`;
+                body.scrollTop = body.scrollHeight;
+            }, 650);
+            
+            input.value = '';
+            body.scrollTop = body.scrollHeight;
+        }
+
+        // Modern Addition 1: PWA Service Worker (fully inline, self-contained)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                const swCode = `
+                    const CACHE = 'agricore-cache-v1';
+                    self.addEventListener('install', e => {
+                        e.waitUntil(
+                            caches.open(CACHE).then(cache => cache.addAll(['/','index.html']))
+                        );
+                    });
+                    self.addEventListener('fetch', e => {
+                        e.respondWith(
+                            caches.match(e.request).then(response => response || fetch(e.request))
+                        );
+                    });
+                `;
+                const blob = new Blob([swCode], {type: 'application/javascript'});
+                const swUrl = URL.createObjectURL(blob);
+                navigator.serviceWorker.register(swUrl)
+                    .then(() => console.log('%cAgriCore PWA ready for offline use', 'color:#2ECC71;font-weight:bold'))
+                    .catch(err => console.log('PWA SW error', err));
+            });
         }
     </script>
 </body>
