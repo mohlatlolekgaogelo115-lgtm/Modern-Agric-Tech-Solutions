@@ -3,561 +3,826 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AgriCore | The Big Three (Full Functionality)</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <!-- Modern Addition 1: PWA Manifest (self-contained data URI) -->
-    <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22AgriCore%20Precision%20Ag%22%2C%22short_name%22%3A%22AgriCore%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22theme_color%22%3A%22%232ECC71%22%2C%22background_color%22%3A%22%23F8F9FA%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22https%3A%2F%2Fpicsum.photos%2F192%2F192%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fpng%22%7D%2C%7B%22src%22%3A%22https%3A%2F%2Fpicsum.photos%2F512%2F512%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fpng%22%7D%5D%7D">
-    
+    <title>TerraSoil AI • Gauteng Soil Lab</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap" rel="stylesheet">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
         :root {
-            --soil-color: #8D6E63;
-            --plant-color: #2ECC71;
-            --water-color: #3498DB;
-            --dark: #1A1A1A;
-            --light: #F8F9FA;
-            --text-gray: #4A4A4A;
-            --footer-bg: #111111;
+            --emerald: 16 185 129;
         }
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            scroll-behavior: smooth;
+        .tail-container {
+            font-family: 'Inter', system_ui, sans-serif;
         }
-        body {
-            background-color: var(--light);
-            color: var(--dark);
-            line-height: 1.6;
+        .logo-font {
+            font-family: 'Space Grotesk', sans-serif;
         }
-        nav {
-            background-color: var(--dark);
-            color: var(--light);
-            padding: 1rem 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
+        .hero-bg {
+            background: linear-gradient(135deg, #10b981 0%, #166534 100%);
         }
-        nav h1 span { color: var(--plant-color); }
-        .nav-links a {
-            color: var(--light);
-            text-decoration: none;
-            margin-left: 1.5rem;
-            font-weight: 500;
+        .card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        header {
-            background: linear-gradient(rgba(26, 26, 26, 0.85), rgba(26, 26, 26, 0.85)), url('https://images.unsplash.com/photo-1586771107445-d3af2e88258e?auto=format&fit=crop&w=1920&q=80') center/cover;
-            color: var(--light);
-            padding: 10rem 5%;
-            text-align: center;
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
         }
-        .cta-btn {
-            background-color: var(--plant-color);
-            color: var(--dark);
-            padding: 1rem 2.5rem;
-            text-decoration: none;
-            font-weight: bold;
-            border-radius: 30px;
-            cursor: pointer;
-            border: none;
-            transition: 0.3s;
+        .modal {
+            animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        section { padding: 6rem 5%; }
-        .grid-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
-            align-items: center;
+        @keyframes modalPop {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
         }
-        .reverse-grid { direction: rtl; }
-        .reverse-grid > * { direction: ltr; }
-        .module-badge {
-            font-size: 1.2rem;
-            padding: 0.3rem 1rem;
-            border-radius: 20px;
-            color: white;
-            font-weight: bold;
+        .gauge {
+            background: conic-gradient(#10b981 var(--progress), #e5e7eb 0);
         }
-        .feature-box {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            margin-bottom: 1rem;
+        .soil-photo {
+            transition: all 0.4s ease;
         }
-        .visual-container {
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            min-height: 450px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-        #upload-zone {
-            border: 2px dashed var(--plant-color);
-            width: 100%;
-            height: 200px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            border-radius: 10px;
-            transition: 0.3s;
-        }
-        #upload-zone:hover { background: #f0fff4; }
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 60px;
-            height: 34px;
-        }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 34px;
-        }
-        input:checked + .slider { background-color: var(--water-color); }
-        /* PROFESSIONAL FOOTER STYLES */
-        footer {
-            background-color: var(--footer-bg);
-            color: #e0e0e0;
-            padding: 4rem 5% 2rem 5%;
-            font-size: 0.9rem;
-        }
-        .footer-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr 2fr;
-            gap: 3rem;
-            border-bottom: 1px solid #333;
-            padding-bottom: 3rem;
-        }
-        .footer-brand h2 {
-            color: white;
-            margin-bottom: 1rem;
-        }
-        .footer-brand h2 span { color: var(--plant-color); }
-        .footer-column h4 {
-            color: white;
-            margin-bottom: 1.2rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-size: 0.8rem;
-        }
-        .footer-column ul {
-            list-style: none;
-        }
-        .footer-column ul li {
-            margin-bottom: 0.8rem;
-        }
-        .footer-column ul li a {
-            color: #aaa;
-            text-decoration: none;
-            transition: 0.3s;
-        }
-        .footer-column ul li a:hover {
-            color: var(--plant-color);
-        }
-        .newsletter-form {
-            display: flex;
-            margin-top: 1rem;
-        }
-        .newsletter-form input {
-            background: #222;
-            border: 1px solid #444;
-            padding: 0.8rem;
-            color: white;
-            border-radius: 5px 0 0 5px;
-            flex: 1;
-        }
-        .newsletter-form button {
-            background: var(--plant-color);
-            border: none;
-            padding: 0 1.2rem;
-            border-radius: 0 5px 5px 0;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .footer-bottom {
-            padding-top: 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            color: #666;
-        }
-        @media (max-width: 968px) {
-            .footer-grid { grid-template-columns: 1fr 1fr; }
-        }
-        @media (max-width: 600px) {
-            .footer-grid { grid-template-columns: 1fr; }
-            .footer-bottom { flex-direction: column; gap: 1rem; text-align: center; }
-        }
-
-        /* New styles for modern additions (only added) */
-        #chat-btn {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: var(--plant-color);
-            color: #1A1A1A;
-            border: none;
-            width: 65px;
-            height: 65px;
-            border-radius: 50%;
-            font-size: 28px;
-            box-shadow: 0 10px 30px rgba(46, 204, 113, 0.4);
-            z-index: 9999;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        #chat-btn:hover { transform: scale(1.1); }
-        #chat-modal {
-            display: none;
-            position: fixed;
-            bottom: 110px;
-            right: 30px;
-            width: 360px;
-            background: white;
-            border-radius: 18px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.25);
-            z-index: 10000;
-            overflow: hidden;
+        .analysis-bar {
+            animation: growBar 1.2s ease forwards;
         }
     </style>
 </head>
-<body>
-    <nav>
-        <h1>Agri<span>Core</span></h1>
-        <div class="nav-links">
-            <a href="#">Home</a>
-            <a href="#layer-a">Soil</a>
-            <a href="#layer-b">Plant Health</a>
-            <a href="#layer-c">Water</a>
+<body class="tail-container bg-emerald-50 text-slate-900 min-h-screen">
+    <!-- NAVBAR -->
+    <nav class="bg-white border-b border-emerald-100 sticky top-0 z-50">
+        <div class="max-w-screen-2xl mx-auto px-8 py-5 flex items-center justify-between">
+            <div class="flex items-center gap-x-3">
+                <div class="w-9 h-9 bg-emerald-600 rounded-2xl flex items-center justify-center text-white text-2xl shadow-inner">🌱</div>
+                <div>
+                    <span class="logo-font text-3xl font-semibold tracking-tighter text-emerald-700">TerraSoil</span>
+                    <span class="text-emerald-500 text-sm font-medium ml-1">AI</span>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-x-8 text-sm font-medium">
+                <a href="#" onclick="switchTab(0)" class="nav-link text-emerald-700 font-semibold flex items-center gap-x-2 active">
+                    <i class="fa-solid fa-gauge-high"></i> Dashboard
+                </a>
+                <a href="#" onclick="switchTab(1)" class="nav-link text-slate-500 hover:text-emerald-700 flex items-center gap-x-2">
+                    <i class="fa-solid fa-upload"></i> Analyze
+                </a>
+                <a href="#" onclick="switchTab(2)" class="nav-link text-slate-500 hover:text-emerald-700 flex items-center gap-x-2">
+                    <i class="fa-solid fa-chart-line"></i> History
+                </a>
+                <a href="#" onclick="switchTab(3)" class="nav-link text-slate-500 hover:text-emerald-700 flex items-center gap-x-2">
+                    <i class="fa-solid fa-map"></i> My Fields
+                </a>
+            </div>
+
+            <div class="flex items-center gap-x-6">
+                <div class="relative">
+                    <input type="text" id="search" placeholder="Search fields or reports..." 
+                           class="bg-slate-100 border border-slate-200 focus:border-emerald-300 rounded-3xl py-2.5 pl-11 pr-5 text-sm w-72 focus:outline-none">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-3 text-slate-400"></i>
+                </div>
+                
+                <button onclick="showNotifications()" 
+                        class="relative w-10 h-10 flex items-center justify-center text-slate-500 hover:text-emerald-600 transition-colors">
+                    <i class="fa-solid fa-bell text-xl"></i>
+                    <span id="notif-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">1</span>
+                </button>
+                
+                <div class="flex items-center gap-x-3">
+                    <div class="text-right">
+                        <div class="font-semibold text-sm">Kgaogelo</div>
+                        <div class="text-emerald-600 text-xs font-medium">Johannesburg, Gauteng</div>
+                    </div>
+                    <div class="w-9 h-9 bg-emerald-100 rounded-2xl overflow-hidden border border-emerald-200">
+                        <img src="https://picsum.photos/id/64/128/128" alt="Profile" class="w-full h-full object-cover">
+                    </div>
+                </div>
+            </div>
         </div>
     </nav>
-    <header>
-        <h2>The Core of Precision Ag.</h2>
-        <p>A integrating Soil Intelligence, Plant Agronomy, and Water Management.</p>
-        <button class="cta-btn" onclick="location.href='#layer-a'">Initialize Dashboard</button>
-    </header>
-    <section id="layer-a">
-        <div class="grid-container">
-            <div>
-                <h3 style="color: var(--soil-color);">
-                    <span class="module-badge" style="background-color: var(--soil-color);">Layer A</span>
-                    Soil Intelligence
-                </h3>
-                <div class="feature-box" style="border-left: 5px solid var(--soil-color);">
-                    <h4>Dynamic Nutrient Mapping</h4>
-                    <p>Real-time heatmaps of Nitrogen ($N$), Phosphorus ($P$), and Potassium ($K$) across your acreage.</p>
+
+    <div class="max-w-screen-2xl mx-auto flex">
+        <!-- SIDEBAR -->
+        <div class="w-72 bg-white border-r border-emerald-100 min-h-[calc(100vh-73px)] p-6 hidden lg:flex flex-col">
+            <div class="mb-8">
+                <div class="flex items-center justify-between text-xs uppercase tracking-widest font-medium text-slate-400 mb-3 px-3">
+                    <span>Current Field</span>
                 </div>
-                <div class="feature-box" style="border-left: 5px solid var(--soil-color);">
-                    <h4>Predictive Mineralization AI</h4>
-                    <p>Current Soil Temp: <b>22.5°C</b> | AI Status: <b>Predicting Nutrient Release...</b></p>
-                </div>
-            </div>
-            <div class="visual-container">
-                <h4 style="margin-bottom: 1rem;">Live GIS Nutrient Profile</h4>
-                <canvas id="soilChart" aria-label="Live GIS Nutrient Profile radar chart showing Nitrogen, Phosphorus, Potassium, Magnesium, Sulfur"></canvas>
-            </div>
-        </div>
-    </section>
-    <section id="layer-b" style="background-color: white;">
-        <div class="grid-container reverse-grid">
-            <div>
-                <h3 style="color: var(--plant-color);">
-                    <span class="module-badge" style="background-color: var(--plant-color);">Layer B</span>
-                    Plant Health & Agronomy
-                </h3>
-                <div class="feature-box" style="border-left: 5px solid var(--plant-color);">
-                    <h4>GenAI Virtual Agronomist</h4>
-                    <div id="upload-zone" role="button" tabindex="0" aria-label="Upload leaf photo for AI analysis" onclick="document.getElementById('leaf-upload').click()">
-                        <p id="upload-text">Drag & Drop Leaf Photo Here</p>
-                        <input type="file" id="leaf-upload" style="display:none" onchange="handleAIAnalysis()">
+                <div onclick="selectField()" class="bg-emerald-50 border border-emerald-200 rounded-3xl p-5 cursor-pointer card">
+                    <div class="flex items-center gap-x-3">
+                        <div class="text-4xl">🌾</div>
+                        <div>
+                            <div class="font-semibold">Field Alpha • Duplex Soil</div>
+                            <div class="text-emerald-600 text-sm">Bronkhorstspruit, Gauteng</div>
+                            <div class="flex items-center gap-x-2 text-xs mt-2">
+                                <span class="px-3 py-1 bg-white rounded-2xl font-medium text-emerald-700">Last scan: 3 days ago</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="feature-box" style="border-left: 5px solid var(--plant-color);">
-                    <h4>VRT Export Engine</h4>
-                    <button class="cta-btn" style="width: 100%;" onclick="exportVRT()">Download Tractor Shapefiles (.SHP)</button>
+            </div>
+
+            <div class="space-y-6">
+                <div>
+                    <div class="text-xs uppercase tracking-widest font-medium text-slate-400 mb-3 px-3">Quick Actions</div>
+                    <button onclick="showUploadModal()" 
+                            class="w-full flex items-center gap-x-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-4 px-6 rounded-3xl transition-all active:scale-95">
+                        <i class="fa-solid fa-cloud-arrow-up text-xl"></i>
+                        <span>Upload New Data</span>
+                    </button>
                 </div>
-            </div>
-            <div class="visual-container">
-                <h4 style="margin-bottom: 1rem;">Satellite Spectral Index (NDVI)</h4>
-                <canvas id="ndviChart" aria-label="Satellite Spectral Index (NDVI) line chart"></canvas>
-            </div>
-        </div>
-    </section>
-    <section id="layer-c">
-        <div class="grid-container">
-            <div>
-                <h3 style="color: var(--water-color);">
-                    <span class="module-badge" style="background-color: var(--water-color);">Layer C</span>
-                    Water & Irrigation
-                </h3>
-                <div class="feature-box" style="border-left: 5px solid var(--water-color);">
-                    <h4>AI-Guided Irrigation</h4>
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <p>Smart-Pump Automation:</p>
-                        <label class="switch">
-                            <input type="checkbox" id="pumpSwitch" onchange="togglePump()">
-                            <span class="slider"></span>
-                        </label>
+
+                <div class="bg-slate-50 rounded-3xl p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-sm font-medium">Soil Health Score</span>
+                        <span id="sidebar-score" class="text-3xl font-semibold text-emerald-600">82</span>
                     </div>
-                    <p id="pump-status" style="margin-top: 10px; font-weight: bold; color: var(--text-gray);">Status: Offline</p>
+                    <div class="h-2.5 bg-slate-200 rounded-3xl overflow-hidden">
+                        <div id="sidebar-progress" class="h-full bg-gradient-to-r from-emerald-500 to-teal-400 w-[82%] rounded-3xl"></div>
+                    </div>
+                    <div class="text-xs text-emerald-600 mt-2 flex items-center gap-x-1">
+                        <i class="fa-solid fa-arrow-trend-up"></i> +4 since last month
+                    </div>
                 </div>
-                <div class="feature-box" style="border-left: 5px solid var(--water-color);">
-                    <h4>Water Quality Index</h4>
-                    <p>Salinity: <span style="color: green;">Normal</span> | Runoff Risk: <span style="color: orange;">Moderate</span></p>
-                </div>
-            </div>
-            <div class="visual-container">
-                <h4 style="margin-bottom: 1rem;">Soil Moisture vs. Evapotranspiration</h4>
-                <canvas id="waterChart" aria-label="Soil Moisture vs. Evapotranspiration bar chart"></canvas>
-            </div>
-        </div>
-    </section>
 
-    <!-- Modern Addition 5: Sustainability Metrics Dashboard (Layer D) -->
-    <section id="layer-d" style="background-color: #f8fff9;">
-        <div class="grid-container">
-            <div>
-                <h3 style="color: #27AE60;">
-                    <span class="module-badge" style="background-color: #27AE60;">Layer D</span>
-                    Sustainability Intelligence
-                </h3>
-                <div class="feature-box" style="border-left: 5px solid #27AE60;">
-                    <h4>Carbon Footprint Tracker</h4>
-                    <p>Estimated Carbon Sequestration: <b>15.2 tCO₂/ha</b> (+12% YoY)</p>
-                </div>
-            </div>
-            <div class="visual-container">
-                <h4 style="margin-bottom: 1rem;">Farm Carbon Balance</h4>
-                <canvas id="carbonChart"></canvas>
-            </div>
-        </div>
-    </section>
-
-    <footer>
-        <div class="footer-grid">
-            <div class="footer-brand">
-                <h2>Agri<span>Core</span></h2>
-                <p>Leading the 2026 agricultural revolution through precision data, spectral intelligence, and autonomous resource management.</p>
-                <div class="newsletter-form">
-                    <input type="email" placeholder="Farmer email updates...">
-                    <button>Join</button>
+                <!-- IoT Status -->
+                <div class="bg-white border border-emerald-100 rounded-3xl p-5 text-xs">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="font-medium flex items-center gap-x-2">
+                            <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                            IoT Sensors Online
+                        </span>
+                        <span class="text-emerald-600 font-medium">4 probes</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 text-[10px]">
+                        <div>Moisture: <span id="live-moisture" class="font-semibold">19%</span></div>
+                        <div>Temp: <span id="live-temp" class="font-semibold">23.4°C</span></div>
+                    </div>
+                    <button onclick="simulateIoT()" 
+                            class="mt-4 text-xs w-full py-2 border border-emerald-200 hover:border-emerald-300 rounded-2xl text-emerald-700 font-medium">
+                        Simulate new reading
+                    </button>
                 </div>
             </div>
-            <div class="footer-column">
-                <h4>Platform</h4>
-                <ul>
-                    <li><a href="#layer-a">Soil Mapping</a></li>
-                    <li><a href="#layer-b">Spectral NDVI</a></li>
-                    <li><a href="#layer-c">Water Control</a></li>
-                    <li><a href="#">VRT Export</a></li>
-                </ul>
-            </div>
-            <div class="footer-column">
-                <h4>Support</h4>
-                <ul>
-                    <li><a href="#">Documentation</a></li>
-                    <li><a href="#">API Reference</a></li>
-                    <li><a href="#">Sensor Setup</a></li>
-                    <li><a href="#">Privacy Policy</a></li>
-                </ul>
-            </div>
-            <div class="footer-column">
-                <h4>Contact</h4>
-                <ul>
-                    <li>Email: contact@agricore.tech</li>
-                    <li>Phone: +1 (555) AGRI-DATA</li>
-                    <li>HQ: 1200 Innovation Way, Silicon Prairie</li>
-                </ul>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2026 AgriCore Precision Systems. All Rights Reserved.</p>
-            <p>Status: All Systems Operational</p>
-        </div>
-    </footer>
 
-    <!-- Modern Addition 4: AI-Powered Chatbot (floating button + modal) -->
-    <button id="chat-btn" onclick="toggleChat()">🌱</button>
+            <div class="mt-auto pt-8 border-t border-slate-100">
+                <div class="text-xs text-slate-400">Powered by Liebig’s Law • QUEFTS • Pedotransfer Functions</div>
+            </div>
+        </div>
 
-    <div id="chat-modal">
-        <div style="background: var(--plant-color); color: #1A1A1A; padding: 16px 20px; font-weight: 600; display: flex; justify-content: space-between; align-items: center;">
-            <span>🌱 AgriCore AI Assistant</span>
-            <span onclick="toggleChat()" style="cursor:pointer; font-size: 22px;">×</span>
-        </div>
-        <div id="chat-body" style="height: 340px; padding: 20px; overflow-y: auto; background: #fafafa;">
-            <p><strong>Welcome!</strong> Ask me anything about your farm — soil pH, pest alerts, irrigation schedules, or carbon goals.</p>
-        </div>
-        <div style="padding: 12px; border-top: 1px solid #eee; display: flex;">
-            <input type="text" id="chat-input" placeholder="Type your question..." 
-                   style="flex:1; padding:12px; border:1px solid #ddd; border-radius:8px 0 0 8px;" 
-                   onkeypress="if(event.key==='Enter') sendChatMessage()">
-            <button onclick="sendChatMessage()" style="background:var(--plant-color); color:#1A1A1A; border:none; padding:0 18px; border-radius:0 8px 8px 0; font-weight:bold;">Send</button>
+        <!-- MAIN CONTENT -->
+        <div class="flex-1 p-8 lg:p-12">
+            <!-- HERO BANNER / ALERT -->
+            <div id="alert-banner" 
+                 class="mb-10 bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-3xl p-6 flex items-center justify-between shadow-xl">
+                <div class="flex items-center gap-x-4">
+                    <div class="w-12 h-12 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center text-3xl">⚠️</div>
+                    <div>
+                        <div class="font-semibold text-lg">Urgent: Gauteng duplex soil acidifying</div>
+                        <div class="text-white/90 text-sm">pH dropped to 5.3. Apply 2.5 t/ha agricultural lime immediately to prevent 22% yield loss.</div>
+                    </div>
+                </div>
+                <button onclick="dismissAlert()" 
+                        class="bg-white text-amber-700 hover:bg-amber-50 px-8 py-3 rounded-3xl font-semibold text-sm transition-all">Apply now →</button>
+            </div>
+
+            <!-- DASHBOARD OVERVIEW -->
+            <div class="grid grid-cols-12 gap-6">
+                <!-- METRIC CARDS -->
+                <div class="col-span-12 lg:col-span-8 grid grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- pH -->
+                    <div onclick="showDetailModal('pH')" class="card bg-white rounded-3xl p-6 shadow-sm cursor-pointer">
+                        <div class="flex justify-between">
+                            <div>
+                                <div class="text-slate-400 text-xs font-medium tracking-widest">SOIL pH</div>
+                                <div id="ph-value" class="text-5xl font-semibold text-slate-800 mt-2">5.3</div>
+                                <div class="text-rose-500 text-sm font-medium flex items-center gap-x-1 mt-1">
+                                    <i class="fa-solid fa-arrow-down"></i> Acidic
+                                </div>
+                            </div>
+                            <div class="w-20 h-20 rounded-2xl gauge flex items-center justify-center text-xs font-bold text-slate-700" 
+                                 style="--progress: 53%;">
+                                <span class="text-center leading-none">5.3<br><span class="text-[10px]">pH</span></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- NPK -->
+                    <div class="card bg-white rounded-3xl p-6 shadow-sm">
+                        <div class="text-slate-400 text-xs font-medium tracking-widest mb-4">NPK (kg/ha)</div>
+                        <div class="flex justify-between items-end">
+                            <div class="text-center">
+                                <div class="text-emerald-600 font-bold text-3xl" id="n-value">42</div>
+                                <div class="text-xs text-slate-500">N</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-emerald-600 font-bold text-3xl" id="p-value">28</div>
+                                <div class="text-xs text-slate-500">P</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-emerald-600 font-bold text-3xl" id="k-value">165</div>
+                                <div class="text-xs text-slate-500">K</div>
+                            </div>
+                        </div>
+                        <div class="mt-6 text-xs bg-emerald-50 text-emerald-700 px-4 py-2 rounded-2xl inline-flex items-center">
+                            <i class="fa-solid fa-seedling mr-2"></i> N is limiting (Liebig’s Law)
+                        </div>
+                    </div>
+
+                    <!-- Moisture & Temp -->
+                    <div class="card bg-white rounded-3xl p-6 shadow-sm col-span-2 lg:col-span-1">
+                        <div class="flex justify-between h-full flex-col">
+                            <div>
+                                <div class="flex items-center gap-x-2 text-xs font-medium text-slate-400">
+                                    <i class="fa-solid fa-droplet"></i> MOISTURE
+                                </div>
+                                <div id="moisture-value" class="text-6xl font-semibold mt-1 text-sky-600">19%</div>
+                            </div>
+                            <div class="text-emerald-600 text-sm">Optimal for maize</div>
+                        </div>
+                    </div>
+
+                    <div class="card bg-white rounded-3xl p-6 shadow-sm col-span-2 lg:col-span-1">
+                        <div class="flex justify-between h-full flex-col">
+                            <div>
+                                <div class="flex items-center gap-x-2 text-xs font-medium text-slate-400">
+                                    <i class="fa-solid fa-temperature-half"></i> TEMP
+                                </div>
+                                <div id="temp-value" class="text-6xl font-semibold mt-1">23.8°C</div>
+                            </div>
+                            <div class="text-amber-600 text-sm">+1.2°C since yesterday</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- HEALTH SCORE & PHOTO -->
+                <div class="col-span-12 lg:col-span-4 bg-white rounded-3xl p-7 shadow-sm card flex flex-col">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="uppercase text-xs tracking-widest text-slate-400">Overall Health</div>
+                            <div id="health-score" class="text-[72px] leading-none font-semibold text-emerald-600">82</div>
+                            <div class="text-emerald-500 text-sm -mt-2">/100 • Improving</div>
+                        </div>
+                        <div class="text-right">
+                            <div id="soil-photo-preview" 
+                                 class="w-36 h-36 bg-cover bg-center rounded-3xl shadow-inner border-4 border-white soil-photo"
+                                 style="background-image: url('https://picsum.photos/id/201/400/400')"></div>
+                            <div onclick="triggerPhotoUpload()" 
+                                 class="text-emerald-600 text-xs font-medium mt-3 flex items-center gap-x-1 cursor-pointer hover:underline">
+                                <i class="fa-solid fa-camera"></i> Update soil photo
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-auto pt-8 border-t text-xs">
+                        <div class="flex justify-between mb-2">
+                            <span class="text-slate-500">QUEFTS Nutrient Balance</span>
+                            <span id="quefits-score" class="font-semibold text-emerald-700">91%</span>
+                        </div>
+                        <div class="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-emerald-400 to-teal-500 w-[91%]"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- INTERPRETATION PANEL -->
+                <div class="col-span-12 lg:col-span-7 bg-white rounded-3xl p-8 shadow-sm">
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="font-semibold text-lg flex items-center gap-x-2">
+                            <span class="text-emerald-600">AI Interpretation</span>
+                            <span class="text-xs bg-emerald-100 text-emerald-700 px-3 py-1 rounded-2xl">Updated just now</span>
+                        </div>
+                        <button onclick="runFullAnalysis()" 
+                                class="flex items-center gap-x-2 text-sm font-medium bg-emerald-50 hover:bg-emerald-100 px-5 py-3 rounded-3xl transition-colors">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Run new analysis
+                        </button>
+                    </div>
+                    
+                    <div id="interpretation-text" class="prose prose-slate text-sm leading-relaxed">
+                        Your Gauteng duplex soil (clay loam over sandy clay) shows Nitrogen as the primary limiting nutrient per <strong>Liebig’s Law of the Minimum</strong>. 
+                        Current pH 5.3 is below optimum for maize. QUEFTS model predicts 18% yield increase if NPK balanced to 80-40-180 kg/ha. 
+                        Pedotransfer functions estimate water holding capacity at 26% (good for dry spells).
+                    </div>
+                    
+                    <div class="mt-8 grid grid-cols-3 gap-4">
+                        <div class="bg-emerald-50 rounded-2xl p-5 text-center">
+                            <div class="text-emerald-700 text-xs font-medium">RECOMMENDED</div>
+                            <div class="font-semibold text-2xl mt-2 text-emerald-800">2.5 t/ha</div>
+                            <div class="text-xs text-slate-500">Agricultural lime</div>
+                        </div>
+                        <div class="bg-amber-50 rounded-2xl p-5 text-center">
+                            <div class="text-amber-700 text-xs font-medium">NEXT ACTION</div>
+                            <div class="font-semibold text-2xl mt-2 text-amber-800">45 kg/ha</div>
+                            <div class="text-xs text-slate-500">Urea (N source)</div>
+                        </div>
+                        <div class="bg-sky-50 rounded-2xl p-5 text-center">
+                            <div class="text-sky-700 text-xs font-medium">WATER ADVICE</div>
+                            <div class="font-semibold text-2xl mt-2 text-sky-800">Irrigate 18 mm</div>
+                            <div class="text-xs text-slate-500">Next 48 hrs</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TREND CHART -->
+                <div class="col-span-12 lg:col-span-5 bg-white rounded-3xl p-8 shadow-sm">
+                    <div class="flex items-center justify-between mb-6">
+                        <span class="font-semibold">Soil Trends • Last 90 days</span>
+                        <select id="chart-select" onchange="updateChart()" 
+                                class="text-xs bg-slate-100 border-0 rounded-2xl py-2 px-4 focus:ring-0">
+                            <option value="ph">pH Trend</option>
+                            <option value="npk">NPK Trend</option>
+                            <option value="moisture">Moisture Trend</option>
+                        </select>
+                    </div>
+                    <canvas id="trend-chart" height="140"></canvas>
+                </div>
+
+                <!-- HISTORY TABLE -->
+                <div class="col-span-12 bg-white rounded-3xl overflow-hidden shadow-sm">
+                    <div class="px-8 py-6 border-b flex items-center justify-between bg-slate-50">
+                        <span class="font-semibold text-lg">Field History • 6 analyses</span>
+                        <button onclick="exportReport()" 
+                                class="text-emerald-600 text-sm flex items-center gap-x-2 hover:text-emerald-700">
+                            <i class="fa-solid fa-download"></i> Export CSV
+                        </button>
+                    </div>
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b text-xs uppercase text-slate-400 font-medium">
+                                <th class="py-5 px-8 text-left">Date</th>
+                                <th class="py-5 px-8 text-left">pH</th>
+                                <th class="py-5 px-8 text-left">N</th>
+                                <th class="py-5 px-8 text-left">Health Score</th>
+                                <th class="py-5 px-8 text-left">Limiting Factor</th>
+                                <th class="py-5 px-8 text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-body" class="text-sm divide-y"></tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 
+    <!-- UPLOAD MODAL -->
+    <div id="upload-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur flex items-center justify-center z-[999]">
+        <div class="modal bg-white rounded-3xl max-w-lg w-full mx-4 shadow-2xl">
+            <div class="px-8 py-6 border-b flex items-center justify-between">
+                <span class="font-semibold text-xl">Upload Soil Data</span>
+                <button onclick="closeUploadModal()" class="text-3xl leading-none text-slate-300 hover:text-slate-500">×</button>
+            </div>
+            
+            <div class="p-8">
+                <div class="flex border-b">
+                    <button onclick="switchUploadTab(0)" id="tab-0"
+                            class="upload-tab flex-1 py-4 text-center border-b-2 border-emerald-600 text-emerald-700 font-medium">📸 Soil Photo</button>
+                    <button onclick="switchUploadTab(1)" id="tab-1"
+                            class="upload-tab flex-1 py-4 text-center text-slate-400">📄 Lab Report</button>
+                    <button onclick="switchUploadTab(2)" id="tab-2"
+                            class="upload-tab flex-1 py-4 text-center text-slate-400">📡 IoT Data</button>
+                </div>
+                
+                <!-- PHOTO TAB -->
+                <div id="upload-content-0" class="py-10">
+                    <div id="photo-dropzone" 
+                         class="border-2 border-dashed border-emerald-200 hover:border-emerald-300 rounded-3xl h-64 flex flex-col items-center justify-center cursor-pointer transition-colors"
+                         onclick="document.getElementById('photo-input').click()">
+                        <i class="fa-solid fa-cloud-arrow-up text-5xl text-emerald-300 mb-4"></i>
+                        <p class="font-medium text-slate-500">Drop soil photo here or click to upload</p>
+                        <p class="text-xs text-slate-400 mt-1">JPG, PNG • Max 10MB</p>
+                        <input type="file" id="photo-input" accept="image/*" class="hidden" onchange="handlePhotoUpload(event)">
+                    </div>
+                    
+                    <div id="photo-preview-container" class="hidden mt-6">
+                        <img id="photo-preview" class="rounded-3xl w-full max-h-80 object-cover shadow" alt="Soil preview">
+                        <button onclick="analyzePhoto()" 
+                                class="mt-6 w-full py-4 bg-emerald-600 text-white font-semibold rounded-3xl active:scale-95 transition-all">
+                            Analyze with AI Vision
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- LAB TAB -->
+                <div id="upload-content-1" class="hidden py-10">
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-xs font-medium mb-2 text-slate-500">Paste or upload CSV / PDF</label>
+                            <div class="border border-slate-200 rounded-3xl p-6 text-center text-slate-400 text-sm">
+                                Drag lab results here (demo: auto-filled)
+                            </div>
+                        </div>
+                        <button onclick="fakeLabUpload()" 
+                                class="w-full py-4 bg-emerald-600 text-white font-semibold rounded-3xl">
+                            Use Sample Gauteng Lab Report
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- IOT TAB -->
+                <div id="upload-content-2" class="hidden py-10 text-center">
+                    <div class="text-emerald-500 mb-6">
+                        <i class="fa-solid fa-satellite-dish text-6xl"></i>
+                    </div>
+                    <p class="font-medium">IoT probes connected</p>
+                    <p class="text-xs text-slate-400 mt-1">Moisture, NPK, Temp, EC</p>
+                    <button onclick="fakeIoTUpload()" 
+                            class="mt-10 w-full py-4 bg-emerald-600 text-white font-semibold rounded-3xl">
+                        Import latest sensor reading
+                    </button>
+                </div>
+            </div>
+            
+            <div class="p-8 border-t flex justify-end gap-x-3">
+                <button onclick="closeUploadModal()" 
+                        class="px-8 py-3.5 text-slate-500 font-medium">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ANALYSIS LOADING MODAL -->
+    <div id="loading-modal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-[1000]">
+        <div class="bg-white rounded-3xl w-96 text-center p-12">
+            <div class="w-16 h-16 mx-auto border-4 border-emerald-200 border-t-emerald-600 animate-spin rounded-full"></div>
+            <div class="mt-8 font-medium">Analyzing with scientific models...</div>
+            <div class="text-xs text-slate-400 mt-2">Liebig’s • QUEFTS • Pedotransfer</div>
+            <div class="h-1.5 bg-emerald-100 rounded-3xl mt-8 overflow-hidden">
+                <div id="loading-bar" class="h-full w-0 bg-emerald-500 transition-all duration-1000"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DETAIL MODAL -->
+    <div id="detail-modal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-[999]">
+        <div class="modal bg-white max-w-md w-full rounded-3xl p-8">
+            <div class="flex justify-between items-center mb-8">
+                <span id="modal-title" class="font-semibold text-2xl"></span>
+                <button onclick="closeDetailModal()" class="text-3xl text-slate-300">×</button>
+            </div>
+            <div id="modal-content" class="text-slate-600 leading-relaxed"></div>
+            
+            <div class="mt-10 flex justify-end">
+                <button onclick="closeDetailModal()" 
+                        class="px-10 py-4 bg-slate-100 hover:bg-slate-200 rounded-3xl font-medium">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST -->
+    <div id="toast" class="hidden fixed bottom-6 right-6 bg-emerald-800 text-white rounded-3xl shadow-2xl px-6 py-4 flex items-center gap-x-3">
+        <i class="fa-solid fa-check-circle"></i>
+        <span id="toast-text" class="font-medium"></span>
+    </div>
+
     <script>
-        // === ORIGINAL JAVASCRIPT (100% unchanged) ===
-        const ctxSoil = document.getElementById('soilChart').getContext('2d');
-        new Chart(ctxSoil, {
-            type: 'radar',
-            data: {
-                labels: ['Nitrogen', 'Phosphorus', 'Potassium', 'Magnesium', 'Sulfur'],
-                datasets: [{
-                    label: 'Field Sector 01',
-                    data: [85, 60, 90, 45, 70],
-                    backgroundColor: 'rgba(141, 110, 99, 0.4)',
-                    borderColor: '#8D6E63'
-                }]
-            }
-        });
-        const ctxNDVI = document.getElementById('ndviChart').getContext('2d');
-        new Chart(ctxNDVI, {
-            type: 'line',
-            data: {
-                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-                datasets: [{
-                    label: 'NDVI Score',
-                    data: [0.4, 0.65, 0.82, 0.78],
-                    borderColor: '#2ECC71',
-                    fill: true,
-                    backgroundColor: 'rgba(46, 204, 113, 0.1)'
-                }]
-            }
-        });
-        const ctxWater = document.getElementById('waterChart').getContext('2d');
-        new Chart(ctxWater, {
-            type: 'bar',
-            data: {
-                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
-                datasets: [{
-                    label: 'Soil Moisture %',
-                    data: [45, 42, 38, 55, 52],
-                    backgroundColor: '#3498DB'
-                }]
-            }
-        });
-        function handleAIAnalysis() {
-            const text = document.getElementById('upload-text');
-            text.innerHTML = "<b>Analyzing Image...</b>";
-            setTimeout(() => {
-                text.innerHTML = "<b>Result:</b> Target identified. Suggesting Bio-Pesticide: Neem Extract.";
-                text.style.color = "var(--plant-color)";
-            }, 2000);
-        }
-        function exportVRT() {
-            alert("Generating VRT prescription files. Download starting...");
-        }
-        function togglePump() {
-            const status = document.getElementById('pump-status');
-            const isChecked = document.getElementById('pumpSwitch').checked;
-            status.innerText = isChecked ? "Status: AI Optimized (Pumping Active)" : "Status: Offline";
-            status.style.color = isChecked ? "var(--water-color)" : "var(--text-gray)";
+        // Tailwind script already loaded via CDN
+        function initTailwind() {
+            // No extra config needed
         }
 
-        // === NEW MODERN ADDITIONS ===
+        // Sample data
+        let currentData = {
+            ph: 5.3,
+            n: 42,
+            p: 28,
+            k: 165,
+            moisture: 19,
+            temp: 23.8,
+            health: 82,
+            quefts: 91,
+            limiting: "Nitrogen",
+            photo: "https://picsum.photos/id/201/600/600"
+        };
 
-        // Modern Addition 2: Accessibility keyboard support for upload zone
-        document.getElementById('upload-zone').addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' || e.key === ' ') {
-                document.getElementById('leaf-upload').click();
-            }
-        });
+        let historyData = [
+            { date: "2026-02-15", ph: 5.3, n: 42, health: 82, limiting: "Nitrogen" },
+            { date: "2026-01-20", ph: 5.5, n: 55, health: 78, limiting: "Phosphorus" },
+            { date: "2025-12-10", ph: 5.8, n: 68, health: 85, limiting: "None" },
+            { date: "2025-11-05", ph: 6.1, n: 72, health: 79, limiting: "Potassium" },
+        ];
 
-        // Modern Addition 3: Web Vitals / Lazy Loading with Intersection Observer
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
+        let trendChart;
+
+        function renderHistory() {
+            const tbody = document.getElementById("history-body");
+            tbody.innerHTML = "";
+            historyData.forEach((entry, i) => {
+                const row = document.createElement("tr");
+                row.className = "hover:bg-emerald-50 transition-colors cursor-pointer";
+                row.innerHTML = `
+                    <td class="py-6 px-8 font-medium">${entry.date}</td>
+                    <td class="py-6 px-8">${entry.ph}</td>
+                    <td class="py-6 px-8">${entry.n}</td>
+                    <td class="py-6 px-8">
+                        <span class="inline-flex items-center px-4 py-1 bg-emerald-100 text-emerald-700 rounded-2xl text-xs font-medium">${entry.health}</span>
+                    </td>
+                    <td class="py-6 px-8 text-slate-500">${entry.limiting}</td>
+                    <td class="py-6 px-8 text-right">
+                        <button onclick="loadHistoryEntry(${i}); event.stopImmediatePropagation();" 
+                                class="text-emerald-600 hover:text-emerald-700 text-xs font-medium">Load</button>
+                    </td>
+                `;
+                row.onclick = () => loadHistoryEntry(i);
+                tbody.appendChild(row);
+            });
+        }
+
+        function loadHistoryEntry(idx) {
+            const entry = historyData[idx];
+            currentData.ph = entry.ph;
+            currentData.n = entry.n;
+            currentData.health = entry.health;
+            currentData.limiting = entry.limiting;
+            updateAllUI();
+            showToast("History entry loaded");
+            closeUploadModal();
+        }
+
+        function updateAllUI() {
+            document.getElementById("ph-value").textContent = currentData.ph;
+            document.getElementById("n-value").textContent = currentData.n;
+            document.getElementById("p-value").textContent = currentData.p;
+            document.getElementById("k-value").textContent = currentData.k;
+            document.getElementById("moisture-value").textContent = currentData.moisture + "%";
+            document.getElementById("temp-value").textContent = currentData.temp + "°C";
+            document.getElementById("health-score").textContent = currentData.health;
+            document.getElementById("quefits-score").textContent = currentData.quefits + "%";
+            document.getElementById("sidebar-score").textContent = currentData.health;
+            document.getElementById("sidebar-progress").style.width = currentData.health + "%";
+            document.getElementById("soil-photo-preview").style.backgroundImage = `url('${currentData.photo}')`;
+            
+            // Fake interpretation update
+            document.getElementById("interpretation-text").innerHTML = `
+                Your Gauteng duplex soil (clay loam over sandy clay) shows <strong>${currentData.limiting}</strong> as the primary limiting nutrient per Liebig’s Law. 
+                pH ${currentData.ph} is below optimum. QUEFTS balance is strong at ${currentData.quefits}%. 
+                Pedotransfer water retention: 26%.
+            `;
+        }
+
+        function createTrendChart() {
+            const ctx = document.getElementById("trend-chart");
+            if (trendChart) trendChart.destroy();
+            
+            trendChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ["Nov 5", "Dec 10", "Jan 20", "Feb 15"],
+                    datasets: [{
+                        label: 'pH',
+                        data: [6.1, 5.8, 5.5, 5.3],
+                        borderColor: '#10b981',
+                        tension: 0.4,
+                        borderWidth: 3,
+                        pointBackgroundColor: '#fff',
+                        pointBorderWidth: 3
+                    }]
+                },
+                options: {
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { grid: { color: '#f1f5f9' }, min: 4.5, max: 7.5 },
+                        x: { grid: { color: '#f1f5f9' } }
+                    },
+                    elements: { point: { radius: 5 } }
                 }
             });
-        }, { threshold: 0.3 });
-
-        document.querySelectorAll('canvas').forEach(canvas => {
-            canvas.style.opacity = '0.3';
-            observer.observe(canvas);
-        });
-
-        // Modern Addition 5: Sustainability Carbon Chart
-        const ctxCarbon = document.getElementById('carbonChart').getContext('2d');
-        new Chart(ctxCarbon, {
-            type: 'doughnut',
-            data: {
-                labels: ['Sequestered', 'Emitted'],
-                datasets: [{
-                    data: [68, 32],
-                    backgroundColor: ['#27AE60', '#E74C3C'],
-                    borderColor: '#fff',
-                    borderWidth: 4
-                }]
-            },
-            options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
-        });
-
-        // Modern Addition 4: AI Chatbot
-        function toggleChat() {
-            const modal = document.getElementById('chat-modal');
-            modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
         }
-        function sendChatMessage() {
-            const input = document.getElementById('chat-input');
-            const body = document.getElementById('chat-body');
-            if (!input.value.trim()) return;
+
+        function updateChart() {
+            if (!trendChart) return;
+            const type = document.getElementById("chart-select").value;
             
-            body.innerHTML += `<p style="text-align:right;color:var(--plant-color);margin:8px 0;"><strong>You:</strong> ${input.value}</p>`;
-            
-            const question = input.value.toLowerCase();
+            if (type === "ph") {
+                trendChart.data.datasets[0].data = [6.1, 5.8, 5.5, 5.3];
+                trendChart.data.datasets[0].label = "pH";
+                trendChart.data.datasets[0].borderColor = "#10b981";
+            } else if (type === "npk") {
+                trendChart.data.datasets[0].data = [72, 68, 55, 42];
+                trendChart.data.datasets[0].label = "N (kg/ha)";
+                trendChart.data.datasets[0].borderColor = "#eab308";
+            } else {
+                trendChart.data.datasets[0].data = [22, 18, 15, 19];
+                trendChart.data.datasets[0].label = "Moisture %";
+                trendChart.data.datasets[0].borderColor = "#0ea5e9";
+            }
+            trendChart.update();
+        }
+
+        // Modal controls
+        function showUploadModal() {
+            document.getElementById("upload-modal").classList.remove("hidden");
+            document.getElementById("upload-modal").classList.add("flex");
+            switchUploadTab(0);
+        }
+
+        function closeUploadModal() {
+            const modal = document.getElementById("upload-modal");
+            modal.classList.add("hidden");
+            modal.classList.remove("flex");
+        }
+
+        function switchUploadTab(n) {
+            for (let i = 0; i < 3; i++) {
+                const tab = document.getElementById("tab-" + i);
+                const content = document.getElementById("upload-content-" + i);
+                if (i === n) {
+                    tab.classList.add("border-b-2", "border-emerald-600", "text-emerald-700");
+                    tab.classList.remove("text-slate-400");
+                    content.classList.remove("hidden");
+                } else {
+                    tab.classList.remove("border-b-2", "border-emerald-600", "text-emerald-700");
+                    tab.classList.add("text-slate-400");
+                    content.classList.add("hidden");
+                }
+            }
+        }
+
+        let uploadedPhotoURL = "";
+
+        function handlePhotoUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                uploadedPhotoURL = ev.target.result;
+                document.getElementById("photo-preview").src = uploadedPhotoURL;
+                document.getElementById("photo-preview-container").classList.remove("hidden");
+                document.getElementById("photo-dropzone").classList.add("hidden");
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function analyzePhoto() {
+            closeUploadModal();
+            showLoadingModal();
             setTimeout(() => {
-                let reply = "Great question! ";
-                if (question.includes('ph') || question.includes('soil')) reply += "Your average soil pH is 6.4 — perfect range for maize.";
-                else if (question.includes('pest') || question.includes('disease')) reply += "NDVI shows early stress in Sector B2. Recommend scouting for aphids.";
-                else if (question.includes('irrigation') || question.includes('water')) reply += "AI suggests 38 minutes tonight at 60% capacity.";
-                else reply += "Based on your latest data, I recommend adjusting nitrogen by +8 kg/ha this week.";
-                body.innerHTML += `<p style="margin:8px 0;"><strong>AgriCore AI:</strong> ${reply}</p>`;
-                body.scrollTop = body.scrollHeight;
-            }, 650);
-            
-            input.value = '';
-            body.scrollTop = body.scrollHeight;
+                currentData.photo = uploadedPhotoURL || "https://picsum.photos/id/201/600/600";
+                currentData.ph = 5.3;
+                currentData.n = 39;
+                currentData.health = 79;
+                currentData.limiting = "Nitrogen";
+                updateAllUI();
+                hideLoadingModal();
+                showToast("Photo analyzed • Texture detected: clay loam");
+            }, 1650);
         }
 
-        // Modern Addition 1: PWA Service Worker (fully inline, self-contained)
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                const swCode = `
-                    const CACHE = 'agricore-cache-v1';
-                    self.addEventListener('install', e => {
-                        e.waitUntil(
-                            caches.open(CACHE).then(cache => cache.addAll(['/','index.html']))
-                        );
-                    });
-                    self.addEventListener('fetch', e => {
-                        e.respondWith(
-                            caches.match(e.request).then(response => response || fetch(e.request))
-                        );
-                    });
-                `;
-                const blob = new Blob([swCode], {type: 'application/javascript'});
-                const swUrl = URL.createObjectURL(blob);
-                navigator.serviceWorker.register(swUrl)
-                    .then(() => console.log('%cAgriCore PWA ready for offline use', 'color:#2ECC71;font-weight:bold'))
-                    .catch(err => console.log('PWA SW error', err));
-            });
+        function fakeLabUpload() {
+            closeUploadModal();
+            showLoadingModal();
+            setTimeout(() => {
+                currentData.ph = 5.3;
+                currentData.n = 42;
+                currentData.p = 28;
+                currentData.k = 165;
+                currentData.health = 82;
+                currentData.limiting = "Nitrogen";
+                updateAllUI();
+                hideLoadingModal();
+                showToast("Lab report imported • Liebig’s applied");
+            }, 1200);
         }
+
+        function fakeIoTUpload() {
+            closeUploadModal();
+            showLoadingModal();
+            setTimeout(() => {
+                currentData.moisture = 21;
+                currentData.temp = 24.1;
+                updateAllUI();
+                hideLoadingModal();
+                showToast("IoT data synced from 4 probes");
+            }, 900);
+        }
+
+        function triggerPhotoUpload() {
+            showUploadModal();
+        }
+
+        function showLoadingModal() {
+            const modal = document.getElementById("loading-modal");
+            modal.classList.remove("hidden");
+            modal.classList.add("flex");
+            // Animate loading bar
+            setTimeout(() => {
+                document.getElementById("loading-bar").style.width = "100%";
+            }, 100);
+        }
+
+        function hideLoadingModal() {
+            const modal = document.getElementById("loading-modal");
+            modal.classList.add("hidden");
+            modal.classList.remove("flex");
+            document.getElementById("loading-bar").style.width = "0%";
+        }
+
+        function runFullAnalysis() {
+            showLoadingModal();
+            setTimeout(() => {
+                // Random small improvement
+                currentData.health = Math.min(99, currentData.health + 3);
+                currentData.ph = parseFloat((currentData.ph + 0.1).toFixed(1));
+                currentData.n += 4;
+                updateAllUI();
+                hideLoadingModal();
+                showToast("Full scientific analysis complete");
+            }, 1850);
+        }
+
+        function showDetailModal(type) {
+            const modal = document.getElementById("detail-modal");
+            document.getElementById("modal-title").textContent = type + " Details";
+            
+            let html = "";
+            if (type === "pH") {
+                html = `<p class="text-lg">Current pH <span class="font-semibold">${currentData.ph}</span> is slightly acidic for maize in Gauteng duplex soils.</p>
+                        <p class="mt-6">Recommended lime application: <span class="font-bold text-emerald-700">2.5 t/ha</span> to reach target 6.2.</p>`;
+            } else {
+                html = `<p>Detailed breakdown available in full report.</p>`;
+            }
+            document.getElementById("modal-content").innerHTML = html;
+            modal.classList.remove("hidden");
+            modal.classList.add("flex");
+        }
+
+        function closeDetailModal() {
+            const modal = document.getElementById("detail-modal");
+            modal.classList.add("hidden");
+            modal.classList.remove("flex");
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+            document.getElementById("toast-text").textContent = message;
+            toast.classList.remove("hidden");
+            toast.style.transform = "translateY(0)";
+            setTimeout(() => {
+                toast.style.transform = "translateY(80px)";
+                setTimeout(() => toast.classList.add("hidden"), 400);
+            }, 3200);
+        }
+
+        function simulateIoT() {
+            currentData.moisture = Math.floor(Math.random() * 8) + 17;
+            currentData.temp = (22 + Math.random() * 4).toFixed(1);
+            updateAllUI();
+            showToast("Live IoT reading received");
+        }
+
+        function dismissAlert() {
+            document.getElementById("alert-banner").style.display = "none";
+            showToast("Lime recommendation added to shopping list");
+        }
+
+        function exportReport() {
+            showToast("Report exported as CSV (demo)");
+        }
+
+        function selectField() {
+            showToast("Field Alpha selected");
+        }
+
+        function showNotifications() {
+            showToast("No new notifications • All good");
+        }
+
+        function switchTab(n) {
+            document.querySelectorAll(".nav-link").forEach((el, i) => {
+                if (i === n) el.classList.add("text-emerald-700", "font-semibold");
+                else el.classList.remove("text-emerald-700", "font-semibold");
+            });
+            if (n === 1) showUploadModal();
+            if (n === 2) {
+                window.scrollTo({ top: document.querySelector(".bg-white.rounded-3xl.overflow-hidden").offsetTop - 100, behavior: "smooth" });
+            }
+        }
+
+        // Initialize everything
+        window.onload = function() {
+            initTailwind();
+            renderHistory();
+            updateAllUI();
+            createTrendChart();
+            
+            // Keyboard escape support
+            document.addEventListener("keydown", function(e) {
+                if (e.key === "Escape") {
+                    const modals = document.querySelectorAll("#upload-modal, #loading-modal, #detail-modal");
+                    for (let m of modals) {
+                        if (!m.classList.contains("hidden")) {
+                            m.classList.add("hidden");
+                            m.classList.remove("flex");
+                        }
+                    }
+                }
+            });
+            
+            // Demo: auto show toast after 2.8s
+            setTimeout(() => {
+                showToast("Welcome back to TerraSoil AI, Kgaogelo 👋");
+            }, 2800);
+            
+            // Make nav links nice
+            console.log("%cTerraSoil AI Dashboard ready for Gauteng farmers 🌱", "color:#10b981; font-family:monospace");
+        };
     </script>
 </body>
 </html>
