@@ -3,131 +3,210 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Soil Analysis | Soil Intelligence Dashboard</title>
+    <title>TokenField | Regenerative Carbon Marketplace</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        .sidebar-item:hover { background-color: #2d3748; }
-        .stat-card { transition: transform 0.2s; }
-        .stat-card:hover { transform: translateY(-5px); }
+        body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
+        .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); }
+        .hero-gradient { background: linear-gradient(135deg, #f0f4f0 0%, #e8eee8 100%); }
+        .card-hover:hover { transform: translateY(-5px); transition: all 0.3s ease; }
     </style>
 </head>
-<body class="bg-slate-50 font-sans text-slate-900">
+<body class="bg-slate-50 text-slate-900">
 
-    <div class="flex min-h-screen">
-        <aside class="w-64 bg-slate-900 text-white flex flex-col">
-            <div class="p-6 text-2xl font-bold border-b border-slate-700 flex items-center gap-2">
-                <i data-lucide="sprout" class="text-green-400"></i> TerraAnalysis
-            </div>
-            <nav class="flex-1 p-4 space-y-2">
-                <a href="#" class="sidebar-item flex items-center gap-3 p-3 rounded-lg bg-green-600">
-                    <i data-lucide="layout-dashboard"></i> Dashboard
-                </a>
-                <a href="#" class="sidebar-item flex items-center gap-3 p-3 rounded-lg">
-                    <i data-lucide="microscope"></i> The Science Lab
-                </a>
-                <a href="#" class="sidebar-item flex items-center gap-3 p-3 rounded-lg">
-                    <i data-lucide="history"></i> Field History
-                </a>
-                <a href="#" class="sidebar-item flex items-center gap-3 p-3 rounded-lg">
-                    <i data-lucide="upload-cloud"></i> Upload Data
-                </a>
-            </nav>
-            <div class="p-4 border-t border-slate-700 text-xs text-slate-400">
-                System Status: <span class="text-green-400">Online</span>
-            </div>
-        </aside>
-
-        <main class="flex-1 overflow-y-auto">
-            <header class="bg-white border-b p-6 flex justify-between items-center">
-                <h1 class="text-xl font-semibold">North Field - Sector A1</h1>
-                <div class="flex items-center gap-4">
-                    <span class="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1">
-                        <i data-lucide="alert-triangle" size="16"></i> Critical N-P-K Alert
-                    </span>
-                    <button class="bg-slate-100 p-2 rounded-full"><i data-lucide="bell"></i></button>
-                    <div class="w-10 h-10 rounded-full bg-slate-300"></div>
+    <nav class="sticky top-0 z-50 glass border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <div class="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center">
+                    <i data-lucide="leaf" class="text-white w-5 h-5"></i>
                 </div>
-            </header>
-
-            <div class="p-8 space-y-8">
-                <section class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    <div class="stat-card bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                        <p class="text-sm text-slate-500 font-medium uppercase">Moisture</p>
-                        <h3 class="text-3xl font-bold">24.2%</h3>
-                        <p class="text-xs text-green-500 mt-2">Optimal range</p>
-                    </div>
-                    <div class="stat-card bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                        <p class="text-sm text-slate-500 font-medium uppercase">Temperature</p>
-                        <h3 class="text-3xl font-bold">18°C</h3>
-                        <p class="text-xs text-slate-400 mt-2">Probe #004</p>
-                    </div>
-                    <div class="stat-card bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                        <p class="text-sm text-slate-500 font-medium uppercase">Organic Matter</p>
-                        <h3 class="text-3xl font-bold">3.8%</h3>
-                        <p class="text-xs text-blue-500 mt-2">+0.2% from last year</p>
-                    </div>
-                    <div class="stat-card bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                        <p class="text-sm text-slate-500 font-medium uppercase">pH Level</p>
-                        <h3 class="text-3xl font-bold">6.2</h3>
-                        <p class="text-xs text-amber-500 mt-2">Slightly Acidic</p>
-                    </div>
-                </section>
-
-                <section class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                        <h2 class="text-lg font-bold mb-4 flex items-center gap-2">
-                            <i data-lucide="layers" class="text-amber-600"></i> Liebig’s Law of the Minimum
-                        </h2>
-                        <div class="flex items-end justify-between h-48 gap-2 bg-slate-50 p-4 rounded-lg">
-                            <div class="w-12 bg-green-500 h-[90%] rounded-t relative"><span class="absolute -top-6 left-0 text-xs">N</span></div>
-                            <div class="w-12 bg-amber-500 h-[40%] rounded-t relative"><span class="absolute -top-6 left-0 text-xs">P</span></div>
-                            <div class="w-12 bg-green-500 h-[85%] rounded-t relative"><span class="absolute -top-6 left-0 text-xs">K</span></div>
-                            <div class="w-12 bg-green-400 h-[70%] rounded-t relative"><span class="absolute -top-6 left-0 text-xs">Mg</span></div>
-                            <div class="w-12 bg-blue-500 h-[60%] rounded-t relative"><span class="absolute -top-6 left-0 text-xs">H2O</span></div>
-                        </div>
-                        
-                        <p class="mt-4 text-sm text-slate-600 italic">
-                            Your yield is currently limited by <strong>Phosphorus (P)</strong>. 
-                            Further N-application will result in runoff without P-correction.
-                        </p>
-                    </div>
-
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                        <h2 class="text-lg font-bold mb-4 flex items-center gap-2">
-                            <i data-lucide="activity" class="text-blue-600"></i> QUEFTS Nutrient Balance
-                        </h2>
-                        <div class="border-l-2 border-b-2 border-slate-300 h-48 relative overflow-hidden bg-slate-50">
-                            <svg class="absolute inset-0 w-full h-full">
-                                <path d="M 0 180 Q 150 50 400 30" stroke="#2563eb" fill="transparent" stroke-width="3"/>
-                                <circle cx="200" cy="80" r="5" fill="#ef4444" />
-                            </svg>
-                        </div>
-                        
-                        <div class="mt-4 space-y-2">
-                            <div class="flex justify-between text-sm"><span>Internal Efficiency:</span> <span class="font-bold">High</span></div>
-                            <div class="flex justify-between text-sm"><span>Estimated Yield Potential:</span> <span class="font-bold">8.4 Tons/Ha</span></div>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="bg-white p-8 rounded-xl shadow-sm border border-dashed border-slate-300">
-                    <div class="text-center max-w-md mx-auto">
-                        <i data-lucide="cloud-upload" class="mx-auto h-12 w-12 text-slate-400 mb-4"></i>
-                        <h2 class="text-xl font-bold">Upload Lab Results & Photos</h2>
-                        <p class="text-slate-500 text-sm mt-2 mb-6">Drop your CSV, PDF, or field photos. We'll extract the chemical properties automatically.</p>
-                        <div class="flex gap-4 justify-center">
-                            <button class="bg-slate-900 text-white px-6 py-2 rounded-lg font-medium">Browse Files</button>
-                            <button class="border border-slate-300 px-6 py-2 rounded-lg font-medium">Link IoT Probe</button>
-                        </div>
-                    </div>
-                </section>
+                <span class="text-xl font-bold tracking-tight text-slate-800">TokenField</span>
             </div>
-        </main>
-    </div>
+            <div class="hidden md:flex space-x-8 text-sm font-medium text-slate-600">
+                <a href="#how-it-works" class="hover:text-emerald-600">How it Works</a>
+                <a href="#tech" class="hover:text-emerald-600">The Tech</a>
+                <a href="#marketplace" class="hover:text-emerald-600">Marketplace</a>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button class="text-sm font-semibold text-emerald-700 hover:text-emerald-800 px-4 py-2">Log In</button>
+                <button class="bg-emerald-600 text-white text-sm font-semibold px-5 py-2.5 rounded-full hover:bg-emerald-700 transition shadow-lg shadow-emerald-200/50">
+                    Get Started
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero-gradient pt-20 pb-32 px-6">
+        <div class="max-w-7xl mx-auto text-center">
+            <div class="inline-flex items-center space-x-2 bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-6">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                <span>Live Marketplace: 24,000+ Tons Sequestered</span>
+            </div>
+            <h1 class="text-5xl md:text-7xl font-bold text-slate-900 mb-6 leading-tight">
+                Turn Your Soil's Health <br><span class="text-emerald-600">into a Liquid Asset.</span>
+            </h1>
+            <p class="text-lg text-slate-600 max-w-2xl mx-auto mb-10 leading-relaxed">
+                TokenField uses satellite remote sensing and blockchain to verify regenerative farming. 
+                We automate the paperwork so farmers get paid and companies buy offsets they can trust.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+                <button class="bg-slate-900 text-white px-8 py-4 rounded-xl font-bold hover:bg-slate-800 transition flex items-center justify-center">
+                    <i data-lucide="tractor" class="mr-2 w-5 h-5"></i> I am a Farmer
+                </button>
+                <button class="bg-white text-slate-900 border border-slate-200 px-8 py-4 rounded-xl font-bold hover:border-emerald-500 transition flex items-center justify-center shadow-sm">
+                    <i data-lucide="building-2" class="mr-2 w-5 h-5"></i> Corporate Buyer
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <section id="how-it-works" class="py-24 px-6 bg-white">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold mb-4">The Dirt-to-Data Pipeline</h2>
+                <p class="text-slate-500">How we turn regenerative practices into verified carbon tokens.</p>
+            </div>
+            <div class="grid md:grid-cols-4 gap-8">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <i data-lucide="sprout" class="text-emerald-600 w-8 h-8"></i>
+                    </div>
+                    <h3 class="font-bold mb-2">1. Practice</h3>
+                    <p class="text-sm text-slate-500">Farmers implement no-till or cover cropping methods.</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <i data-lucide="satellite" class="text-blue-600 w-8 h-8"></i>
+                    </div>
+                    <h3 class="font-bold mb-2">2. Verify</h3>
+                    <p class="text-sm text-slate-500">Satellites & AI monitor biomass and soil health remotely.</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-purple-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <i data-lucide="blocks" class="text-purple-600 w-8 h-8"></i>
+                    </div>
+                    <h3 class="font-bold mb-2">3. Mint</h3>
+                    <p class="text-sm text-slate-500">Carbon credits are tokenized via secure smart contracts.</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-orange-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <i data-lucide="circle-dollar-sign" class="text-orange-600 w-8 h-8"></i>
+                    </div>
+                    <h3 class="font-bold mb-2">4. Payout</h3>
+                    <p class="text-sm text-slate-500">Buyers purchase offsets; farmers receive instant funds.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="marketplace" class="py-24 px-6 bg-slate-50">
+        <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-12">
+            <div class="bg-white p-10 rounded-3xl shadow-xl border border-slate-100 card-hover">
+                <h3 class="text-2xl font-bold mb-6 flex items-center">
+                    <i data-lucide="wheat" class="mr-3 text-emerald-600"></i> Farmer Dashboard
+                </h3>
+                <ul class="space-y-4 mb-8">
+                    <li class="flex items-start"><i data-lucide="check-circle-2" class="text-emerald-500 mr-3 w-5 h-5 mt-1"></i> <span>Automated verification—no manual audits.</span></li>
+                    <li class="flex items-start"><i data-lucide="check-circle-2" class="text-emerald-500 mr-3 w-5 h-5 mt-1"></i> <span>Get paid in 24h via Smart Contract Escrow.</span></li>
+                    <li class="flex items-start"><i data-lucide="check-circle-2" class="text-emerald-500 mr-3 w-5 h-5 mt-1"></i> <span>Retain 95% of the token value.</span></li>
+                </ul>
+                <button class="w-full bg-slate-50 text-slate-800 border border-slate-200 py-3 rounded-xl font-bold hover:bg-emerald-600 hover:text-white transition">Explore Farmer Portal</button>
+            </div>
+
+            <div class="bg-slate-900 p-10 rounded-3xl shadow-xl text-white card-hover">
+                <h3 class="text-2xl font-bold mb-6 flex items-center">
+                    <i data-lucide="bar-chart-3" class="mr-3 text-emerald-400"></i> Offset Marketplace
+                </h3>
+                <ul class="space-y-4 mb-8 text-slate-300">
+                    <li class="flex items-start"><i data-lucide="shield-check" class="text-emerald-400 mr-3 w-5 h-5 mt-1"></i> <span>Fractionalized credits from verified farms.</span></li>
+                    <li class="flex items-start"><i data-lucide="shield-check" class="text-emerald-400 mr-3 w-5 h-5 mt-1"></i> <span>Full traceability from GPS to Wallet.</span></li>
+                    <li class="flex items-start"><i data-lucide="shield-check" class="text-emerald-400 mr-3 w-5 h-5 mt-1"></i> <span>Real-time impact reporting for ESG.</span></li>
+                </ul>
+                <button class="w-full bg-emerald-500 text-white py-3 rounded-xl font-bold hover:bg-emerald-400 transition">Browse Verified Credits</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="tech" class="py-24 px-6 bg-white overflow-hidden">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center">
+            <div class="md:w-1/2 mb-12 md:mb-0">
+                <h2 class="text-3xl font-bold mb-6 leading-tight">We Don’t Just Guess.<br>We Ground-Truth.</h2>
+                <p class="text-slate-600 mb-6 italic">"Satellites see the progress; blockchain secures the truth."</p>
+                <div class="space-y-6">
+                    <div class="flex items-center space-x-4">
+                        <div class="p-3 bg-slate-100 rounded-lg"><i data-lucide="layers" class="w-6 h-6 text-slate-700"></i></div>
+                        <div>
+                            <h4 class="font-bold">Multispectral Imaging</h4>
+                            <p class="text-sm text-slate-500">Scanning soil nitrogen and carbon density from orbit.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="p-3 bg-slate-100 rounded-lg"><i data-lucide="fingerprint" class="w-6 h-6 text-slate-700"></i></div>
+                        <div>
+                            <h4 class="font-bold">Immutable Ledger</h4>
+                            <p class="text-sm text-slate-500">Every ton of CO2 is locked to a unique farm coordinate.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="md:w-1/2 relative">
+                <div class="w-full aspect-video bg-slate-100 rounded-2xl shadow-inner border-8 border-slate-50 flex items-center justify-center">
+                    <i data-lucide="radar" class="w-20 h-20 text-emerald-200 animate-pulse"></i>
+                    <span class="absolute bottom-4 right-8 bg-white px-3 py-1 rounded shadow text-xs font-mono">LAT: 41.8781° N | LON: 87.6298° W</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-slate-900 text-slate-400 py-16 px-6">
+        <div class="max-w-7xl mx-auto grid md:grid-cols-4 gap-12">
+            <div class="col-span-1 md:col-span-1">
+                <div class="flex items-center space-x-2 text-white mb-6">
+                    <i data-lucide="leaf" class="text-emerald-500"></i>
+                    <span class="text-xl font-bold">TokenField</span>
+                </div>
+                <p class="text-sm">Empowering the next generation of regenerative agriculture through decentralized finance and remote sensing.</p>
+            </div>
+            <div>
+                <h5 class="text-white font-bold mb-6 text-sm uppercase tracking-widest">Platform</h5>
+                <ul class="space-y-4 text-sm">
+                    <li><a href="#" class="hover:text-emerald-400">Farmer Onboarding</a></li>
+                    <li><a href="#" class="hover:text-emerald-400">Corporate Buy-Side</a></li>
+                    <li><a href="#" class="hover:text-emerald-400">Carbon Pricing Data</a></li>
+                </ul>
+            </div>
+            <div>
+                <h5 class="text-white font-bold mb-6 text-sm uppercase tracking-widest">Trust</h5>
+                <ul class="space-y-4 text-sm">
+                    <li><a href="#" class="hover:text-emerald-400">Verification Protocol</a></li>
+                    <li><a href="#" class="hover:text-emerald-400">Smart Contract Audit</a></li>
+                    <li><a href="#" class="hover:text-emerald-400">Whitepaper</a></li>
+                </ul>
+            </div>
+            <div>
+                <h5 class="text-white font-bold mb-6 text-sm uppercase tracking-widest">Subscribe</h5>
+                <div class="flex">
+                    <input type="text" placeholder="Email" class="bg-slate-800 border-none rounded-l-lg px-4 py-2 w-full focus:ring-1 focus:ring-emerald-500 text-white">
+                    <button class="bg-emerald-600 text-white px-4 py-2 rounded-r-lg"><i data-lucide="arrow-right"></i></button>
+                </div>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto border-t border-slate-800 mt-16 pt-8 flex flex-col md:flex-row justify-between text-xs">
+            <p>&copy; 2026 TokenField Labs. All rights reserved.</p>
+            <div class="flex space-x-6 mt-4 md:mt-0">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
 
     <script>
-        // Initialize Icons
+        // Initialize Lucide Icons
         lucide.createIcons();
     </script>
 </body>
